@@ -1,77 +1,60 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827">
-<title>NIFTY Behavior Tracker</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#111827;font-family:Arial,sans-serif}
-.wrap{max-width:780px;margin:auto;padding:14px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-h1{font-size:23px;margin:0}h2{font-size:18px;margin:20px 0 10px}p{margin:4px 0;color:#6b7280}
-button{border:0;border-radius:10px;padding:11px 14px;background:#111827;color:white;font-weight:700}
-nav{display:flex;gap:7px;margin-bottom:14px}nav button{background:white;color:#111827;border:1px solid #ddd}nav .on{background:#111827;color:white}
-.card,.hero,.row{background:white;border:1px solid #e5e7eb;border-radius:15px;padding:15px;margin-bottom:10px}
-.hero{background:#111827;color:white}.hero p{color:#d1d5db}.big{font-size:38px;font-weight:800;margin:6px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.muted{font-size:12px;color:#6b7280}
-label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{width:100%;padding:12px;margin-top:5px;border:1px solid #d1d5db;border-radius:10px;background:white}
-.calc{background:#f3f4f6;border-radius:10px;padding:11px}.save{width:100%;margin-top:10px}
-.prob{display:grid;grid-template-columns:105px 1fr 55px;gap:8px;align-items:center;margin:12px 0}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden}.fill{height:100%;background:#111827}
-.row{display:grid;grid-template-columns:1.1fr 1fr .7fr 1fr auto;gap:8px;align-items:center;font-size:13px}
-.danger{background:white;color:#b91c1c;border:1px solid #fecaca;padding:7px 9px}.note{padding:11px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#9a3412;font-size:13px}
-footer{text-align:center;color:#6b7280;font-size:11px;padding:20px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row button{grid-column:2}.prob{grid-template-columns:95px 1fr 52px}}
-</style>
-</head>
-<body>
-<main class="wrap">
-<header><div><h1>NIFTY Behavior Tracker</h1><p>Record → analyze → improve</p></div><button onclick="tab('entry')">+ Record</button></header>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>NIFTY Behavior Tracker</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#111827;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center}h1{font-size:23px;margin:0}h2{font-size:18px;margin:20px 0 10px}p{margin:5px 0;color:#6b7280}button{border:0;border-radius:10px;padding:11px 14px;background:#111827;color:#fff;font-weight:700}nav{display:flex;gap:7px;margin:12px 0}nav button{background:#fff;color:#111827;border:1px solid #ddd}nav .on{background:#111827;color:#fff}.card,.hero,.row{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:15px;margin-bottom:10px}.hero{background:#111827;color:#fff}.hero p{color:#d1d5db}.big{font-size:38px;font-weight:800;margin:6px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{width:100%;padding:12px;margin-top:5px;border:1px solid #d1d5db;border-radius:10px;background:#fff}.calc{background:#f3f4f6;border-radius:10px;padding:11px}.save{width:100%;margin-top:10px}.muted{font-size:12px;color:#6b7280}.prob{display:grid;grid-template-columns:105px 1fr 55px;gap:8px;align-items:center;margin:12px 0}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden}.fill{height:100%;background:#111827}.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{background:#f8fafc;border-radius:10px;padding:11px}.metric b{display:block;font-size:18px;margin-top:4px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px;border-bottom:1px solid #eee;text-align:left}.table th{background:#f8fafc}.row{display:grid;grid-template-columns:1.1fr 1fr .7fr 1fr auto;gap:8px;align-items:center;font-size:13px}.danger{background:#fff;color:#b91c1c;border:1px solid #fecaca;padding:7px 9px}.note{padding:11px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#9a3412;font-size:13px}footer{text-align:center;color:#6b7280;font-size:11px;padding:20px}@media(max-width:700px){header>div:last-child{display:flex;flex-direction:column}.grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.metricgrid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.prob{grid-template-columns:95px 1fr 52px}}
+.outcome-recover{color:#047857!important}.outcome-down{color:#dc2626!important}.outcome-flat{color:#d97706!important}
+.fill.recover{background:#10b981!important}.fill.down{background:#ef4444!important}.fill.flat{background:#f59e0b!important}
+.kpi{border-radius:14px;padding:14px;color:#fff;font-weight:700}.kpi b{display:block;font-size:22px;margin-top:4px}
+.kpi.recover{background:linear-gradient(135deg,#059669,#10b981)}.kpi.down{background:linear-gradient(135deg,#dc2626,#f43f5e)}
+.kpi.flat{background:linear-gradient(135deg,#d97706,#f59e0b)}.kpi.neutral{background:linear-gradient(135deg,#2563eb,#4f46e5)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.badge.recover{background:#d1fae5;color:#047857}.badge.down{background:#fee2e2;color:#b91c1c}.badge.flat{background:#fef3c7;color:#b45309}
+</style></head><body><main class="wrap">
+<header><div><h1>NIFTY Behavior Tracker</h1><p>Opening type → outcome → probability</p></div><div style="display:flex;gap:7px"><button onclick="resetAll()" class="danger">Reset All Data</button><button onclick="tab('entry')">+ Record</button></div></header>
 <nav><button id="b-dashboard" class="on" onclick="tab('dashboard')">Dashboard</button><button id="b-entry" onclick="tab('entry')">Daily Entry</button><button id="b-history" onclick="tab('history')">History</button></nav>
-
-<section id="dashboard">
-<div class="hero"><div class="muted" style="color:#cbd5e1">Recorded sessions</div><div class="big" id="count">0</div><div id="headline">Start recording real NIFTY sessions.</div></div>
-<h2>Overall behavior</h2><div class="card" id="overall"></div>
-<h2>Opening type</h2><div class="grid">
-<div class="card"><b>Flat</b><div id="flat"></div></div>
-<div class="card"><b>Gap Up</b><div id="up"></div></div>
-<div class="card"><b>Gap Down</b><div id="down"></div></div>
-</div>
-<h2>Recent vs all-time</h2><div class="grid"><div class="card"><b>Last 20</b><div id="recent"></div></div><div class="card"><b>Last 50</b><div id="recent50"></div></div></div>
-<div class="note" id="note"></div>
-</section>
-
-<section id="entry" style="display:none">
-<div class="card"><h2>Daily Entry</h2>
-<label>Date<input id="date" type="date"></label>
-<label>Previous Close<input id="prev" type="number" step="0.05" oninput="calc()"></label>
-<label>Open<input id="open" type="number" step="0.05" oninput="calc()"></label>
-<div class="calc" id="calc">Enter Previous Close and Open.</div>
-<label>Opening Type<select id="opening"><option>Flat</option><option>Gap Up</option><option>Gap Down</option></select></label>
-<label>Result<select id="result"><option>Recovers</option><option>Further Down</option><option>Flat</option></select></label>
-<label>Expiry Day<select id="expiry"><option>No</option><option>Yes</option></select></label>
-<button class="save" onclick="add()">Save Session</button>
-</div>
-</section>
-
-<section id="history" style="display:none"><h2>History</h2><div id="historyList"></div></section>
-<footer>Historical probability is not a guaranteed future outcome or trading signal.</footer>
-</main>
+<section id="dashboard"><div class="hero"><span class="muted" style="color:#cbd5e1">Recorded sessions</span><div class="big" id="count">0</div><div id="headline">Start recording real NIFTY sessions.</div></div>
+<h2>Latest session</h2><div class="card" id="selected"></div><h2>Overall probability</h2><div class="grid" id="kpis"></div><div class="card" id="overall"></div>
+<h2>Which opening type is most likely to go Further Down?</h2>
+<div class="card" id="furtherByOpen"></div>
+<h2>Which opening type is most likely to Recover?</h2>
+<div class="card" id="recoverByOpen"></div>
+<h2>Complete opening × outcome matrix</h2><div class="card" style="overflow:auto"><table class="table"><thead><tr><th>Opening</th><th>Samples</th><th>Recovers</th><th>Further Down</th><th>Flat</th></tr></thead><tbody id="matrix"></tbody></table></div>
+<h2>Further Down — details</h2><div class="card" id="further"></div><h2>Recovers — details</h2><div class="card" id="recover"></div>
+<h2>Recent vs all-time</h2><div class="grid2"><div class="card"><b>Last 20</b><div id="recent"></div></div><div class="card"><b>Last 50</b><div id="recent50"></div></div></div><div class="note" id="note"></div></section>
+<section id="entry" style="display:none"><div class="card"><h2>Daily Entry</h2><label>Date<input id="date" type="date"></label><label>Previous Close<input id="prev" type="number" step=".05" oninput="calc()"></label><label>Open<input id="open" type="number" step=".05" oninput="calc()"></label><div class="calc" id="calc">Enter Previous Close and Open.</div><label>Opening Type<select id="opening"><option>Flat</option><option>Gap Up</option><option>Gap Down</option></select></label><label>Result<select id="result"><option>Recovers</option><option>Further Down</option><option>Flat</option></select></label><div class="grid2"><label>Day High<input id="high" type="number" step=".05"></label><label>Day Low<input id="low" type="number" step=".05"></label></div><label>Day Close<input id="close" type="number" step=".05"></label><div class="grid2"><label>15-min behavior<select id="m15"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label><label>30-min behavior<select id="m30"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label></div><label>Expiry Day<select id="expiry"><option>No</option><option>Yes</option></select></label><button class="save" onclick="add()">Save Session</button></div><div class="note">Enter High, Low and Close if you want the app to explain how far the move went.</div></section>
+<section id="history" style="display:none"><h2>History</h2><div id="historyList"></div></section><footer>Historical frequency is descriptive, not a guaranteed future outcome.</footer></main>
 <script>
-const KEY="nifty_behavior_tracker_v2";let data=JSON.parse(localStorage.getItem(KEY)||"[]");
-const R=["Recovers","Further Down","Flat"];
-document.getElementById("date").value=new Date().toISOString().slice(0,10);
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function tab(x){["dashboard","entry","history"].forEach(y=>{document.getElementById(y).style.display=y===x?"block":"none";document.getElementById("b-"+y).className=y===x?"on":""});render()}
-function calc(){let p=+prev.value,o=+open.value;if(!p||!o){document.getElementById("calc").textContent="Enter Previous Close and Open.";return}let g=o-p,gp=g/p*100;document.getElementById("calc").textContent=`Gap: ${g.toFixed(2)} points (${gp.toFixed(2)}%)`;opening.value=Math.abs(gp)<=.1?"Flat":gp>0?"Gap Up":"Gap Down"}
-function probs(a){let q={Recovers:0,"Further Down":0,Flat:0};a.forEach(x=>q[x.result]++);let n=a.length;R.forEach(r=>q[r]=n?q[r]/n*100:0);return q}
-function block(p,n){return R.map(r=>`<div class="prob"><span>${r}</span><div class="bar"><div class="fill" style="width:${p[r]}%"></div></div><b>${p[r].toFixed(1)}%</b></div>`).join("")+`<div class="muted">Samples: ${n}</div>`}
-function best(p){return R.reduce((a,b)=>p[b]>p[a]?b:a,R[0])}
-function by(a,t){return a.filter(x=>x.opening===t)}
-function add(){let d=date.value,p=+prev.value,o=+open.value;if(!d||p<=0||o<=0)return alert("Enter a valid date, Previous Close and Open.");if(data.some(x=>x.date===d))return alert("A record already exists for this date.");let g=o-p,gp=g/p*100;data.push({id:Date.now(),date:d,previous:p,open:o,gap:g,gapPct:gp,opening:opening.value,result:result.value,expiry:expiry.value==="Yes"});data.sort((a,b)=>a.date.localeCompare(b.date));save();prev.value="";open.value="";result.value="Flat";expiry.value="No";tab("dashboard")}
-function remove(id){if(confirm("Delete this record?")){data=data.filter(x=>x.id!==id);save();render()}}
-function render(){let p=probs(data),n=data.length;count.textContent=n;headline.textContent=n?`Highest historical frequency: ${best(p)}`:"Start recording real NIFTY sessions.";overall.innerHTML=block(p,n);flat.innerHTML=block(probs(by(data,"Flat")),by(data,"Flat").length);up.innerHTML=block(probs(by(data,"Gap Up")),by(data,"Gap Up").length);down.innerHTML=block(probs(by(data,"Gap Down")),by(data,"Gap Down").length);let s=data.slice(-20),s50=data.slice(-50);recent.innerHTML=block(probs(s),s.length);recent50.innerHTML=block(probs(s50),s50.length);note.textContent=n<20?"Collect at least 20 real sessions before relying on probability comparisons.":"Historical frequencies are calculated from your recorded sessions. They do not predict the next session with certainty.";historyList.innerHTML=n?data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening}</span><span>${x.gapPct.toFixed(2)}%</span><b>${x.result}</b><button class="danger" onclick="remove(${x.id})">Delete</button></div>`).join(""):"<div class='card'>No sessions recorded yet.</div>"}
+const KEY="nifty_behavior_tracker_v4",R=["Recovers","Further Down","Flat"],O=["Flat","Gap Up","Gap Down"];
+let data=JSON.parse(localStorage.getItem(KEY)||"[]");
+if(!data.length){
+  const old=JSON.parse(localStorage.getItem("nifty_behavior_tracker_v3")||localStorage.getItem("nifty_behavior_tracker_v2")||"[]");
+  if(old.length){data=old;localStorage.setItem(KEY,JSON.stringify(data));}
+}date.value=new Date().toISOString().slice(0,10);
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}function tab(x){["dashboard","entry","history"].forEach(y=>{document.getElementById(y).style.display=y==x?"block":"none";document.getElementById("b-"+y).className=y==x?"on":""});render()}
+function calc(){let p=+prev.value,o=+open.value;if(!p||!o)return calc.textContent="Enter Previous Close and Open.";let g=o-p,gp=g/p*100;document.getElementById("calc").textContent=`Gap: ${g.toFixed(2)} points (${gp.toFixed(2)}%)`;opening.value=Math.abs(gp)<=.1?"Flat":gp>0?"Gap Up":"Gap Down"}
+function probs(a){let q={Recovers:0,"Further Down":0,Flat:0};a.forEach(x=>q[x.result]++);R.forEach(r=>q[r]=a.length?q[r]/a.length*100:0);return q}function by(a,t){return a.filter(x=>x.opening==t)}function best(p){return R.reduce((a,b)=>p[b]>p[a]?b:a,R[0])}
+function outcomeClass(r){return r==="Recovers"?"recover":r==="Further Down"?"down":"flat"}
+function block(p,n){return R.map(r=>`<div class="prob"><span class="outcome-${outcomeClass(r)}"><b>${r}</b></span><div class="bar"><div class="fill ${outcomeClass(r)}" style="width:${p[r]}%"></div></div><b class="outcome-${outcomeClass(r)}">${p[r].toFixed(1)}%</b></div>`).join("")+`<span class="muted">Samples: ${n}</span>`}
+function openingBreakdown(result){
+  const rows=O.map(o=>{const a=by(data,o),q=probs(a);return {o,n:a.length,p:q[result]};}).filter(x=>x.n);
+  if(!rows.length)return "<span class='muted'>No data yet.</span>";
+  rows.sort((a,b)=>b.p-a.p);
+  const max=rows[0];
+  return `<div class="note" style="margin-bottom:12px"><b>Highest probability:</b> ${max.o} → ${max.p.toFixed(1)}% ${result} (${Math.round(max.p/100*max.n)} of ${max.n})</div>`+
+    rows.map(x=>`<div class="prob"><span><b>${x.o}</b><br><small>${x.n} samples</small></span><div class="bar"><div class="fill ${outcomeClass(result)}" style="width:${x.p}%"></div></div><b class="outcome-${outcomeClass(result)}">${x.p.toFixed(1)}%</b></div>`).join("");
+}
+function stat(a){if(!a.length)return"<span class='muted'>No sessions yet.</span>";let d=a.filter(x=>x.lowFromOpen!=null),c=a.filter(x=>x.closeFromOpen!=null),u=a.filter(x=>x.highFromOpen!=null);let av=k=>{let z=a.map(x=>x[k]).filter(Number.isFinite);return z.length?z.reduce((s,v)=>s+v,0)/z.length:null},mn=k=>{let z=a.map(x=>x[k]).filter(Number.isFinite);return z.length?Math.min(...z):null};return`<div class="metricgrid"><div class="metric"><span class="muted">Samples</span><b>${a.length}</b></div><div class="metric"><span class="muted">Avg Low vs Open</span><b>${av("lowFromOpen")==null?"—":av("lowFromOpen").toFixed(2)+"%"}</b></div><div class="metric"><span class="muted">Worst Low vs Open</span><b>${mn("lowFromOpen")==null?"—":mn("lowFromOpen").toFixed(2)+"%"}</b></div><div class="metric"><span class="muted">Avg Close vs Open</span><b>${av("closeFromOpen")==null?"—":(av("closeFromOpen")>=0?"+":"")+av("closeFromOpen").toFixed(2)+"%"}</b></div></div><p class="muted" style="margin-top:10px">High/Low/Close statistics use only sessions where those prices were entered.</p>`}
+function add(){let d=date.value,p=+prev.value,o=+open.value,h=+high.value,l=+low.value,c=+close.value;if(!d||p<=0||o<=0)return alert("Enter Date, Previous Close and Open.");if(data.some(x=>x.date==d))return alert("A record already exists for this date.");if(h&&l&&h<l)return alert("High cannot be below Low.");let g=o-p,gp=g/p*100;data.push({id:Date.now(),date:d,previous:p,open:o,gap:g,gapPct:gp,opening:opening.value,result:result.value,high:h||null,low:l||null,close:c||null,lowFromOpen:l?(l-o)/o*100:null,highFromOpen:h?(h-o)/o*100:null,closeFromOpen:c?(c-o)/o*100:null,m15:m15.value,m30:m30.value,expiry:expiry.value=="Yes"});data.sort((a,b)=>a.date.localeCompare(b.date));save();prev.value=open.value=high.value=low.value=close.value="";result.value="Flat";tab("dashboard")}
+function resetAll(){
+  if(!data.length){alert("There is no data to reset.");return;}
+  const ok=confirm("WARNING: This will permanently delete ALL recorded NIFTY sessions from this browser. This cannot be undone.\n\nAre you sure you want to reset all data?");
+  if(!ok)return;
+  const verify=confirm("Final confirmation: DELETE ALL DATA?");
+  if(!verify)return;
+  data=[];
+  localStorage.removeItem(KEY);
+  render();
+  tab("dashboard");
+  alert("All NIFTY behavior data has been deleted.");
+}
+function remove(id){if(confirm("Delete this record?")){data=data.filter(x=>x.id!=id);save();render()}}
+function render(){let p=probs(data),n=data.length;count.textContent=n;headline.innerHTML=n?`Highest historical frequency: <span class="badge ${outcomeClass(best(p))}">${best(p)}</span>`:"Start recording real NIFTY sessions.";let s=data.at(-1);selected.innerHTML=s?`<b>${s.date} — ${s.opening}</b><p>Result: <span class="badge ${outcomeClass(s.result)}">${s.result}</span></p>${s.low!=null?`<p>Low vs Open: ${s.lowFromOpen.toFixed(2)}% · High vs Open: +${s.highFromOpen.toFixed(2)}% · Close vs Open: ${s.closeFromOpen>=0?"+":""}${s.closeFromOpen.toFixed(2)}%</p>`:"<p class='muted'>High/Low/Close not entered for this session.</p>"}<button class="danger" style="margin-top:10px" onclick="remove(${s.id})">Delete this entry</button>`:"<span class='muted'>No session recorded.</span>";kpis.innerHTML=`<div class="kpi recover">Recovers<b>${p.Recovers.toFixed(1)}%</b></div><div class="kpi down">Further Down<b>${p["Further Down"].toFixed(1)}%</b></div><div class="kpi flat">Flat<b>${p.Flat.toFixed(1)}%</b></div>`;overall.innerHTML=block(p,n);furtherByOpen.innerHTML=openingBreakdown("Further Down");recoverByOpen.innerHTML=openingBreakdown("Recovers");matrix.innerHTML=O.map(o=>{let a=by(data,o),q=probs(a);return`<tr><td><b>${o}</b></td><td>${a.length}</td><td class="outcome-recover"><b>${q.Recovers.toFixed(1)}%</b></td><td class="outcome-down"><b>${q["Further Down"].toFixed(1)}%</b></td><td class="outcome-flat"><b>${q.Flat.toFixed(1)}%</b></td></tr>`}).join("");let fd=data.filter(x=>x.result=="Further Down"),rc=data.filter(x=>x.result=="Recovers");further.innerHTML=`<p><b>Probability:</b> <span class="outcome-down"><b>${p["Further Down"].toFixed(1)}%</b></span> (${fd.length}/${n})</p>${stat(fd)}<p>For “Further Down”, the app now shows the average and worst intraday decline from the opening price, plus average close vs open.</p>`;recover.innerHTML=`<p><b>Probability:</b> <span class="outcome-recover"><b>${p.Recovers.toFixed(1)}%</b></span> (${rc.length}/${n})</p>${stat(rc)}<p>Recovery analysis becomes stronger when High, Low and Close are entered consistently.</p>`;recent.innerHTML=block(probs(data.slice(-20)),Math.min(20,n));recent50.innerHTML=block(probs(data.slice(-50)),Math.min(50,n));note.textContent=n<20?"Collect at least 20 real sessions before relying on probability comparisons.":"Your statistics are based on recorded sessions.";historyList.innerHTML=n?data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening}</span><span>${x.gapPct.toFixed(2)}%</span><b>${x.result}</b><button class="danger" onclick="remove(${x.id})">Delete entry</button></div>`).join(""):"<div class='card'>No sessions recorded yet.</div>"}
 render();
-</script>
-</body>
-</html>
+</script></body></html>
