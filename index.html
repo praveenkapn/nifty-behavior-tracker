@@ -18,30 +18,29 @@
 .opening-card .probrow .bar{height:9px}
 </style>
 <style>
-:root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--green:#10b981;--green-bg:#ecfdf5;--red:#ef4444;--red-bg:#fef2f2;--amber:#f59e0b;--amber-bg:#fffbeb;--blue:#2563eb}
-.behavior-section{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(17,24,39,.05)}
+.behavior-section{margin-top:18px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(17,24,39,.05)}
 .section-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
 .eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;margin-bottom:5px}
-.section-head h2{font-size:22px;margin:0;color:var(--ink)}
-.section-head p{font-size:13px;margin:5px 0 0;color:var(--muted)}
+.section-head h2{font-size:22px;margin:0;color:#111827}
+.section-head p{font-size:13px;margin:5px 0 0;color:#6b7280}
 .sample-pill{font-size:12px;font-weight:800;padding:7px 10px;border-radius:999px;background:#f3f4f6;color:#475569;white-space:nowrap}
 .behavior-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.behavior-card{border:1px solid var(--line);border-radius:16px;padding:15px;min-width:0;background:#fff}
+.behavior-card{border:1px solid #e5e7eb;border-radius:16px;padding:15px;min-width:0;background:#fff}
 .behavior-card.gapup{border-top:4px solid #2563eb}.behavior-card.gapdown{border-top:4px solid #7c3aed}.behavior-card.flatopen{border-top:4px solid #64748b}
 .opening-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
 .opening-title h3{margin:0;font-size:17px}.opening-title .icon-dot{width:9px;height:9px;border-radius:50%;display:block}.gapup .icon-dot{background:#2563eb}.gapdown .icon-dot{background:#7c3aed}.flatopen .icon-dot{background:#64748b}
-.sample-count{font-size:11px;color:var(--muted);margin-bottom:13px}
+.sample-count{font-size:11px;color:#6b7280;margin-bottom:13px}
 .winner-box{border-radius:12px;padding:10px 11px;margin-bottom:14px}
-.winner-box.recover{background:var(--green-bg);color:#047857}.winner-box.down{background:var(--red-bg);color:#b91c1c}.winner-box.flat{background:var(--amber-bg);color:#b45309}
+.winner-box.recover{background:#ecfdf5;color:#047857}.winner-box.down{background:#fef2f2;color:#b91c1c}.winner-box.flat{background:#fffbeb;color:#b45309}
 .winner-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;opacity:.75}.winner-value{font-size:16px;font-weight:800;margin-top:3px}
 .behavior-row{display:grid;grid-template-columns:95px 1fr 48px;gap:7px;align-items:center;margin:10px 0;font-size:12px}
 .behavior-row .bar{height:8px;background:#eef0f3;border-radius:99px;overflow:hidden}.behavior-row .fill{height:100%;border-radius:99px}
-.behavior-row .recover-fill{background:var(--green)}.behavior-row .down-fill{background:var(--red)}.behavior-row .flat-fill{background:var(--amber)}
+.behavior-row .recover-fill{background:#10b981}.behavior-row .down-fill{background:#ef4444}.behavior-row .flat-fill{background:#f59e0b}
 .behavior-row .recover-text{color:#047857}.behavior-row .down-text{color:#b91c1c}.behavior-row .flat-text{color:#b45309}
 .insight-banner{margin-top:13px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;padding:11px 13px;font-size:13px;color:#334155}
 .insight-banner b{color:#111827}
-.no-data{padding:18px 5px;color:var(--muted);font-size:12px;text-align:center}
-@media(max-width:700px){.behavior-grid{grid-template-columns:1fr}.section-head{align-items:flex-start}.section-head h2{font-size:19px}}
+.no-data{padding:18px 5px;color:#6b7280;font-size:12px;text-align:center}
+@media(max-width:700px){.behavior-grid{grid-template-columns:1fr}.section-head h2{font-size:19px}}
 </style></style></head><body><main class="wrap">
 <header><div><h1>NIFTY Behavior Tracker</h1><p>Opening type → outcome → probability</p></div><div style="display:flex;gap:7px"><button onclick="resetAll()" class="danger">Reset All Data</button><button onclick="tab('entry')">+ Record</button></div></header>
 <nav><button id="b-dashboard" class="on" onclick="tab('dashboard')">Dashboard</button><button id="b-entry" onclick="tab('entry')">Daily Entry</button><button id="b-history" onclick="tab('history')">History</button></nav>
@@ -51,7 +50,7 @@
     <div>
       <div class="eyebrow">CORE MARKET PATTERN</div>
       <h2>NIFTY Opening Behaviour</h2>
-      <p>See what NIFTY historically does after each type of opening.</p>
+      <p>What does NIFTY usually do after each type of opening?</p>
     </div>
     <div class="sample-pill" id="behaviorSamples">0 sessions</div>
   </div>
@@ -63,7 +62,7 @@
 <h2>Which opening type is most likely to Recover?</h2>
 <div class="card" id="recoverByOpen"></div>
 <h2>Complete opening × outcome matrix</h2><div class="card" style="overflow:auto"><table class="table"><thead><tr><th>Opening</th><th>Samples</th><th>Recovers</th><th>Further Down</th><th>Flat</th></tr></thead><tbody id="matrix"></tbody></table></div>
-<h2>Further Down — details</h2><div class="card" id="further"></div><h2>Recovers — supporting statistics</h2><div class="card" id="recover"></div>
+<h2>Further Down — details</h2><div class="card" id="further"></div><h2>Recovers — details</h2><div class="card" id="recover"></div>
 <h2>Recent vs all-time</h2><div class="grid2"><div class="card"><b>Last 20</b><div id="recent"></div></div><div class="card"><b>Last 50</b><div id="recent50"></div></div></div><div class="note" id="note"></div></section>
 <section id="entry" style="display:none"><div class="card"><h2>Daily Entry</h2><label>Date<input id="date" type="date"></label><label>Previous Close<input id="prev" type="number" step=".05" oninput="calc()"></label><label>Open<input id="open" type="number" step=".05" oninput="calc()"></label><div class="calc" id="calc">Enter Previous Close and Open.</div><label>Opening Type<select id="opening"><option>Flat</option><option>Gap Up</option><option>Gap Down</option></select></label><label>Result<select id="result"><option>Recovers</option><option>Further Down</option><option>Flat</option></select></label><div class="grid2"><label>Day High<input id="high" type="number" step=".05"></label><label>Day Low<input id="low" type="number" step=".05"></label></div><label>Day Close<input id="close" type="number" step=".05"></label><div class="grid2"><label>15-min behavior<select id="m15"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label><label>30-min behavior<select id="m30"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label></div><label>Expiry Day<select id="expiry"><option>No</option><option>Yes</option></select></label><button class="save" onclick="add()">Save Session</button></div><div class="note">Enter High, Low and Close if you want the app to explain how far the move went.</div></section>
 <section id="history" style="display:none"><h2>History</h2><div id="historyList"></div></section><footer>Historical frequency is descriptive, not a guaranteed future outcome.</footer></main>
@@ -71,7 +70,7 @@
 const KEY="nifty_behavior_tracker_v4",R=["Recovers","Further Down","Flat"],O=["Flat","Gap Up","Gap Down"];
 let data=JSON.parse(localStorage.getItem(KEY)||"[]");
 if(!data.length){
-  const old=JSON.parse(localStorage.getItem("nifty_behavior_tracker_v3")||localStorage.getItem("nifty_behavior_tracker_v2")||"[]");
+  const old=JSON.parse(localStorage.getItem("nifty_behavior_tracker_v7")||localStorage.getItem("nifty_behavior_tracker_v6")||localStorage.getItem("nifty_behavior_tracker_v5")||localStorage.getItem("nifty_behavior_tracker_v4")||localStorage.getItem("nifty_behavior_tracker_v3")||localStorage.getItem("nifty_behavior_tracker_v2")||"[]");
   if(old.length){data=old;localStorage.setItem(KEY,JSON.stringify(data));}
 }date.value=new Date().toISOString().slice(0,10);
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}function tab(x){["dashboard","entry","history"].forEach(y=>{document.getElementById(y).style.display=y==x?"block":"none";document.getElementById("b-"+y).className=y==x?"on":""});render()}
@@ -104,9 +103,26 @@ function resetAll(){
 function remove(id){if(confirm("Delete this record?")){data=data.filter(x=>x.id!=id);save();render()}}
 function openingCard(opening){
   const a=by(data,opening),q=probs(a);
+  if(!a.length) return `<div class="opening-card"><h3>${opening}</h3><div class="samples">0 samples</div><p class="muted">No sessions recorded for this opening type.</p></div>`;
+  const winner=best(q), cls=outcomeClass(winner);
+  return `<div class="opening-card">
+    <h3>${opening}</h3>
+    <div class="samples">${a.length} sample${a.length==1?"":"s"}</div>
+    <div class="winner ${cls}"><b>Most likely: ${winner}</b> — ${q[winner].toFixed(1)}%</div>
+    ${R.map(r=>`<div class="probrow"><span class="outcome-${outcomeClass(r)}"><b>${r}</b></span><div class="bar"><div class="fill ${outcomeClass(r)}" style="width:${q[r]}%"></div></div><b class="outcome-${outcomeClass(r)}">${q[r].toFixed(1)}%</b></div>`).join("")}
+  </div>`;
+}
+function openingCard(opening){
+  const a=by(data,opening),q=probs(a);
   const cls=opening==="Gap Up"?"gapup":opening==="Gap Down"?"gapdown":"flatopen";
-  if(!a.length) return `<div class="behavior-card ${cls}"><div class="opening-title"><h3>${opening}</h3><span class="icon-dot"></span></div><div class="sample-count">0 sessions</div><div class="no-data">Record this opening type to build its behaviour profile.</div></div>`;
-  const winner=best(q), oc=outcomeClass(winner);
+  if(!a.length){
+    return `<div class="behavior-card ${cls}">
+      <div class="opening-title"><h3>${opening}</h3><span class="icon-dot"></span></div>
+      <div class="sample-count">0 sessions</div>
+      <div class="no-data">Record this opening type to build its behaviour profile.</div>
+    </div>`;
+  }
+  const winner=best(q),oc=outcomeClass(winner);
   return `<div class="behavior-card ${cls}">
     <div class="opening-title"><h3>${opening}</h3><span class="icon-dot"></span></div>
     <div class="sample-count">${a.length} session${a.length===1?"":"s"} recorded</div>
@@ -119,11 +135,55 @@ function openingCard(opening){
     <div class="behavior-row"><span class="flat-text"><b>Flat</b></span><div class="bar"><div class="fill flat-fill" style="width:${q.Flat}%"></div></div><b class="flat-text">${q.Flat.toFixed(1)}%</b></div>
   </div>`;
 }
-function render(){let p=probs(data),n=data.length;count.textContent=n;headline.innerHTML=n?`Highest historical frequency: <span class="badge ${outcomeClass(best(p))}">${best(p)}</span>`:"Start recording real NIFTY sessions.";let s=data.at(-1);selected.innerHTML=s?`<b>${s.date} — ${s.opening}</b><p>Result: <span class="badge ${outcomeClass(s.result)}">${s.result}</span></p>${s.low!=null?`<p>Low vs Open: ${s.lowFromOpen.toFixed(2)}% · High vs Open: +${s.highFromOpen.toFixed(2)}% · Close vs Open: ${s.closeFromOpen>=0?"+":""}${s.closeFromOpen.toFixed(2)}%</p>`:"<p class='muted'>High/Low/Close not entered for this session.</p>"}<button class="danger" style="margin-top:10px" onclick="remove(${s.id})">Delete this entry</button>`:"<span class='muted'>No session recorded.</span>";openingCards.innerHTML=O.map(openingCard).join("");
-behaviorSamples.textContent=`${n} session${n===1?"":"s"}`;
-behaviorInsight.innerHTML=n
-  ? `<b>Quick read:</b> ${O.map(o=>{const a=by(data,o);if(!a.length)return `${o}: no data`;const q=probs(a),w=best(q);return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`}).join(" &nbsp;•&nbsp; ")}`
-  : `Record your first NIFTY session to start building the opening → behaviour probabilities.`;
-furtherByOpen.innerHTML='' openingBreakdown("Further Down");recoverByOpen.innerHTML=openingBreakdown("Recovers");matrix.innerHTML=O.map(o=>{let a=by(data,o),q=probs(a);return`<tr><td><b>${o}</b></td><td>${a.length}</td><td class="outcome-recover"><b>${q.Recovers.toFixed(1)}%</b></td><td class="outcome-down"><b>${q["Further Down"].toFixed(1)}%</b></td><td class="outcome-flat"><b>${q.Flat.toFixed(1)}%</b></td></tr>`}).join("");let fd=data.filter(x=>x.result=="Further Down"),rc=data.filter(x=>x.result=="Recovers");further.innerHTML=`<p><b>Probability:</b> <span class="outcome-down"><b>${p["Further Down"].toFixed(1)}%</b></span> (${fd.length}/${n})</p>${stat(fd)}<p>For “Further Down”, the app now shows the average and worst intraday decline from the opening price, plus average close vs open.</p>`;recover.innerHTML=`<p><b>Probability:</b> <span class="outcome-recover"><b>${p.Recovers.toFixed(1)}%</b></span> (${rc.length}/${n})</p>${stat(rc)}<p>Recovery analysis becomes stronger when High, Low and Close are entered consistently.</p>`;recent.innerHTML=block(probs(data.slice(-20)),Math.min(20,n));recent50.innerHTML=block(probs(data.slice(-50)),Math.min(50,n));note.textContent=n<20?"Collect at least 20 real sessions before relying on probability comparisons.":"Your statistics are based on recorded sessions.";historyList.innerHTML=n?data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening}</span><span>${x.gapPct.toFixed(2)}%</span><b>${x.result}</b><button class="danger" onclick="remove(${x.id})">Delete entry</button></div>`).join(""):"<div class='card'>No sessions recorded yet.</div>"}
+function render(){
+  const p=probs(data),n=data.length;
+  count.textContent=n;
+  headline.innerHTML=n
+    ? `Highest historical frequency: <span class="badge ${outcomeClass(best(p))}">${best(p)}</span>`
+    : "Start recording real NIFTY sessions.";
+
+  const s=data.at(-1);
+  selected.innerHTML=s
+    ? `<b>${s.date} — ${s.opening}</b>
+       <p>Result: <span class="badge ${outcomeClass(s.result)}">${s.result}</span></p>
+       ${s.low!=null
+         ? `<p>Low vs Open: ${s.lowFromOpen.toFixed(2)}% · High vs Open: +${s.highFromOpen.toFixed(2)}% · Close vs Open: ${s.closeFromOpen>=0?"+":""}${s.closeFromOpen.toFixed(2)}%</p>`
+         : "<p class='muted'>High/Low/Close not entered for this session.</p>"}
+       <button class="danger" style="margin-top:10px" onclick="remove(${s.id})">Delete this entry</button>`
+    : "<span class='muted'>No session recorded.</span>";
+
+  openingCards.innerHTML=O.map(openingCard).join("");
+  behaviorSamples.textContent=`${n} session${n===1?"":"s"}`;
+  behaviorInsight.innerHTML=n
+    ? `<b>Quick read:</b> ${O.map(o=>{
+        const a=by(data,o);
+        if(!a.length)return `${o}: no data`;
+        const q=probs(a),w=best(q);
+        return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`;
+      }).join(" &nbsp;•&nbsp; ")}`
+    : "Record your first NIFTY session to start building the opening → behaviour probabilities.";
+
+  furtherByOpen.innerHTML=openingBreakdown("Further Down");
+  recoverByOpen.innerHTML=openingBreakdown("Recovers");
+
+  matrix.innerHTML=O.map(o=>{
+    const a=by(data,o),q=probs(a);
+    return `<tr><td><b>${o}</b></td><td>${a.length}</td><td class="outcome-recover"><b>${q.Recovers.toFixed(1)}%</b></td><td class="outcome-down"><b>${q["Further Down"].toFixed(1)}%</b></td><td class="outcome-flat"><b>${q.Flat.toFixed(1)}%</b></td></tr>`;
+  }).join("");
+
+  const fd=data.filter(x=>x.result==="Further Down"),rc=data.filter(x=>x.result==="Recovers");
+  further.innerHTML=`<p><b>Probability:</b> <span class="outcome-down"><b>${p["Further Down"].toFixed(1)}%</b></span> (${fd.length}/${n})</p>${stat(fd)}<p>For “Further Down”, the app now shows the average and worst intraday decline from the opening price, plus average close vs open.</p>`;
+  recover.innerHTML=`<p><b>Probability:</b> <span class="outcome-recover"><b>${p.Recovers.toFixed(1)}%</b></span> (${rc.length}/${n})</p>${stat(rc)}<p>Recovery analysis becomes stronger when High, Low and Close are entered consistently.</p>`;
+
+  recent.innerHTML=block(probs(data.slice(-20)),Math.min(20,n));
+  recent50.innerHTML=block(probs(data.slice(-50)),Math.min(50,n));
+  note.textContent=n<20
+    ? "Collect at least 20 real sessions before relying on probability comparisons."
+    : "Your statistics are based on recorded sessions.";
+  historyList.innerHTML=n
+    ? data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening}</span><span>${x.gapPct.toFixed(2)}%</span><b>${x.result}</b><button class="danger" onclick="remove(${x.id})">Delete entry</button></div>`).join("")
+    : "<div class='card'>No sessions recorded yet.</div>";
+}
+
 render();
 </script></body></html>
