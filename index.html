@@ -1,189 +1,192 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>NIFTY Behavior Tracker</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#111827;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:14px}header{display:flex;justify-content:space-between;align-items:center}h1{font-size:23px;margin:0}h2{font-size:18px;margin:20px 0 10px}p{margin:5px 0;color:#6b7280}button{border:0;border-radius:10px;padding:11px 14px;background:#111827;color:#fff;font-weight:700}nav{display:flex;gap:7px;margin:12px 0}nav button{background:#fff;color:#111827;border:1px solid #ddd}nav .on{background:#111827;color:#fff}.card,.hero,.row{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:15px;margin-bottom:10px}.hero{background:#111827;color:#fff}.hero p{color:#d1d5db}.big{font-size:38px;font-weight:800;margin:6px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{width:100%;padding:12px;margin-top:5px;border:1px solid #d1d5db;border-radius:10px;background:#fff}.calc{background:#f3f4f6;border-radius:10px;padding:11px}.save{width:100%;margin-top:10px}.muted{font-size:12px;color:#6b7280}.prob{display:grid;grid-template-columns:105px 1fr 55px;gap:8px;align-items:center;margin:12px 0}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden}.fill{height:100%;background:#111827}.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{background:#f8fafc;border-radius:10px;padding:11px}.metric b{display:block;font-size:18px;margin-top:4px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px;border-bottom:1px solid #eee;text-align:left}.table th{background:#f8fafc}.row{display:grid;grid-template-columns:1.1fr 1fr .7fr 1fr auto;gap:8px;align-items:center;font-size:13px}.danger{background:#fff;color:#b91c1c;border:1px solid #fecaca;padding:7px 9px}.note{padding:11px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#9a3412;font-size:13px}footer{text-align:center;color:#6b7280;font-size:11px;padding:20px}@media(max-width:700px){header>div:last-child{display:flex;flex-direction:column}.grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.metricgrid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.prob{grid-template-columns:95px 1fr 52px}}
-.outcome-recover{color:#047857!important}.outcome-down{color:#dc2626!important}.outcome-flat{color:#d97706!important}
-.fill.recover{background:#10b981!important}.fill.down{background:#ef4444!important}.fill.flat{background:#f59e0b!important}
-.kpi{border-radius:14px;padding:14px;color:#fff;font-weight:700}.kpi b{display:block;font-size:22px;margin-top:4px}
-.kpi.recover{background:linear-gradient(135deg,#059669,#10b981)}.kpi.down{background:linear-gradient(135deg,#dc2626,#f43f5e)}
-.kpi.flat{background:linear-gradient(135deg,#d97706,#f59e0b)}.kpi.neutral{background:linear-gradient(135deg,#2563eb,#4f46e5)}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.badge.recover{background:#d1fae5;color:#047857}.badge.down{background:#fee2e2;color:#b91c1c}.badge.flat{background:#fef3c7;color:#b45309}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>NIFTY Behavior Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-.opening-card{background:#fff;border:2px solid #e5e7eb;border-radius:16px;padding:16px}
-.opening-card h3{margin:0 0 4px;font-size:17px}
-.opening-card .samples{font-size:12px;color:#6b7280;margin-bottom:12px}
-.opening-card .winner{padding:9px 10px;border-radius:10px;background:#f3f4f6;margin-bottom:12px;font-size:13px}
-.opening-card .winner.recover{background:#d1fae5;color:#047857}
-.opening-card .winner.down{background:#fee2e2;color:#b91c1c}
-.opening-card .winner.flat{background:#fef3c7;color:#b45309}
-.opening-card .probrow{display:grid;grid-template-columns:105px 1fr 55px;gap:7px;align-items:center;margin:9px 0;font-size:13px}
-.opening-card .probrow .bar{height:9px}
-</style>
-<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#111827;font-family:Arial,sans-serif}.wrap{max-width:960px;margin:auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:23px;margin:0}h2{font-size:18px;margin:20px 0 10px}p{margin:5px 0;color:#6b7280}
+button{border:0;border-radius:10px;padding:11px 14px;background:#111827;color:#fff;font-weight:700;cursor:pointer}button:disabled{opacity:.55}.danger{background:#fff;color:#b91c1c;border:1px solid #fecaca}.small{padding:8px 10px;font-size:12px}
+nav{display:flex;gap:7px;margin:12px 0}nav button{background:#fff;color:#111827;border:1px solid #ddd}nav .on{background:#111827;color:#fff}
+.card,.hero,.row{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:15px;margin-bottom:10px}.hero{background:#111827;color:#fff}.hero p{color:#d1d5db}.big{font-size:38px;font-weight:800;margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{width:100%;padding:12px;margin-top:5px;border:1px solid #d1d5db;border-radius:10px;background:#fff}.calc{background:#f3f4f6;border-radius:10px;padding:11px}.save{width:100%;margin-top:10px}
+.muted{font-size:12px;color:#6b7280}.prob{display:grid;grid-template-columns:105px 1fr 55px;gap:8px;align-items:center;margin:12px 0}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden}.fill{height:100%}
+.up-fill{background:#10b981}.down-fill{background:#ef4444}.flat-fill{background:#f59e0b}.up-text{color:#047857}.down-text{color:#b91c1c}.flat-text{color:#b45309}
 .behavior-section{margin-top:18px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:18px;box-shadow:0 6px 20px rgba(17,24,39,.05)}
-.section-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-.eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;margin-bottom:5px}
-.section-head h2{font-size:22px;margin:0;color:#111827}
-.section-head p{font-size:13px;margin:5px 0 0;color:#6b7280}
-.sample-pill{font-size:12px;font-weight:800;padding:7px 10px;border-radius:999px;background:#f3f4f6;color:#475569;white-space:nowrap}
-.behavior-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.behavior-card{border:1px solid #e5e7eb;border-radius:16px;padding:15px;min-width:0;background:#fff}
-.behavior-card.gapup{border-top:4px solid #2563eb}.behavior-card.gapdown{border-top:4px solid #7c3aed}.behavior-card.flatopen{border-top:4px solid #64748b}
-.opening-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
-.opening-title h3{margin:0;font-size:17px}.opening-title .icon-dot{width:9px;height:9px;border-radius:50%;display:block}.gapup .icon-dot{background:#2563eb}.gapdown .icon-dot{background:#7c3aed}.flatopen .icon-dot{background:#64748b}
-.sample-count{font-size:11px;color:#6b7280;margin-bottom:13px}
-.winner-box{border-radius:12px;padding:10px 11px;margin-bottom:14px}
-.winner-box.recover{background:#ecfdf5;color:#047857}.winner-box.down{background:#fef2f2;color:#b91c1c}.winner-box.flat{background:#fffbeb;color:#b45309}
-.winner-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;opacity:.75}.winner-value{font-size:16px;font-weight:800;margin-top:3px}
-.behavior-row{display:grid;grid-template-columns:95px 1fr 48px;gap:7px;align-items:center;margin:10px 0;font-size:12px}
-.behavior-row .bar{height:8px;background:#eef0f3;border-radius:99px;overflow:hidden}.behavior-row .fill{height:100%;border-radius:99px}
-.behavior-row .recover-fill{background:#10b981}.behavior-row .down-fill{background:#ef4444}.behavior-row .flat-fill{background:#f59e0b}
-.behavior-row .recover-text{color:#047857}.behavior-row .down-text{color:#b91c1c}.behavior-row .flat-text{color:#b45309}
-.insight-banner{margin-top:13px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;padding:11px 13px;font-size:13px;color:#334155}
-.insight-banner b{color:#111827}
-.no-data{padding:18px 5px;color:#6b7280;font-size:12px;text-align:center}
-@media(max-width:700px){.behavior-grid{grid-template-columns:1fr}.section-head h2{font-size:19px}}
-</style></style></head><body><main class="wrap">
-<header><div><h1>NIFTY Behavior Tracker</h1><p>Opening type → outcome → probability</p></div><div style="display:flex;gap:7px"><button onclick="resetAll()" class="danger">Reset All Data</button><button onclick="tab('entry')">+ Record</button></div></header>
-<nav><button id="b-dashboard" class="on" onclick="tab('dashboard')">Dashboard</button><button id="b-entry" onclick="tab('entry')">Daily Entry</button><button id="b-history" onclick="tab('history')">History</button></nav>
-<section id="dashboard"><div class="hero"><span class="muted" style="color:#cbd5e1">Recorded sessions</span><div class="big" id="count">0</div><div id="headline">Start recording real NIFTY sessions.</div></div>
-<h2>Latest session</h2><div class="card" id="selected"></div><section class="behavior-section">
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">CORE MARKET PATTERN</div>
-      <h2>NIFTY Opening Behaviour</h2>
-      <p>What does NIFTY usually do after each type of opening?</p>
-    </div>
-    <div class="sample-pill" id="behaviorSamples">0 sessions</div>
-  </div>
-  <div class="behavior-grid" id="openingCards"></div>
-  <div class="insight-banner" id="behaviorInsight"></div>
+.section-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:#64748b;margin-bottom:5px}.section-head h2{font-size:22px;margin:0}.section-head p{font-size:13px}.sample-pill{font-size:12px;font-weight:800;padding:7px 10px;border-radius:999px;background:#f3f4f6;color:#475569}
+.behavior-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.behavior-card{border:1px solid #e5e7eb;border-radius:16px;padding:15px;background:#fff}.behavior-card.gapup{border-top:4px solid #2563eb}.behavior-card.gapdown{border-top:4px solid #7c3aed}.behavior-card.flatopen{border-top:4px solid #64748b}
+.opening-title{display:flex;justify-content:space-between}.opening-title h3{margin:0;font-size:17px}.icon-dot{width:9px;height:9px;border-radius:50%;display:block}.gapup .icon-dot{background:#2563eb}.gapdown .icon-dot{background:#7c3aed}.flatopen .icon-dot{background:#64748b}
+.sample-count{font-size:11px;color:#6b7280;margin:4px 0 13px}.winner-box{border-radius:12px;padding:10px 11px;margin-bottom:14px}.winner-box.recover{background:#ecfdf5;color:#047857}.winner-box.down{background:#fef2f2;color:#b91c1c}.winner-box.flat{background:#fffbeb;color:#b45309}.winner-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}.winner-value{font-size:16px;font-weight:800;margin-top:3px}
+.behavior-row{display:grid;grid-template-columns:95px 1fr 48px;gap:7px;align-items:center;margin:10px 0;font-size:12px}.behavior-row .bar{height:8px}.no-data{text-align:center;color:#6b7280;font-size:12px;padding:18px 5px}.insight-banner{margin-top:13px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;padding:11px 13px;font-size:13px;color:#334155}
+.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px;border-bottom:1px solid #eee;text-align:left}.table th{background:#f8fafc}.row{display:grid;grid-template-columns:1.1fr 1fr .7fr 1fr auto;gap:8px;align-items:center;font-size:13px}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.badge.recover{background:#d1fae5;color:#047857}.badge.down{background:#fee2e2;color:#b91c1c}.badge.flat{background:#fef3c7;color:#b45309}
+.note{padding:11px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#9a3412;font-size:13px}.success{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}.error{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.auth{max-width:460px;margin:40px auto}.auth h2{margin-top:0}.status{margin:10px 0}.hidden{display:none!important}.toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.right{margin-left:auto}
+@media(max-width:700px){.behavior-grid,.grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row button{grid-column:2}.section-head h2{font-size:19px}}
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth card">
+<h2>NIFTY Behavior Tracker</h2>
+<p>Sign in to keep your NIFTY records in the cloud.</p>
+<label>Email<input id="authEmail" type="email" autocomplete="email"></label>
+<label>Password<input id="authPassword" type="password" autocomplete="current-password"></label>
+<div class="toolbar"><button onclick="signIn()">Sign In</button><button onclick="signUp()">Create Account</button></div>
+<div id="authMsg" class="status"></div>
+<p class="muted">Your sessions are protected by Supabase Auth + database Row Level Security.</p>
+</div>
+
+<main id="app" class="wrap hidden">
+<header>
+<div><h1>NIFTY Behavior Tracker</h1><p id="userLabel"></p></div>
+<div class="toolbar"><button class="small" onclick="tab('entry')">+ Record</button><button class="small danger" onclick="signOut()">Sign out</button></div>
+</header>
+<nav><button id="b-dashboard" class="on" onclick="tab('dashboard')">Dashboard</button><button id="b-entry" onclick="tab('entry')">Daily Entry</button><button id="b-history" onclick="tab('history')">History</button><button id="b-data" onclick="tab('data')">Data</button></nav>
+
+<section id="dashboard">
+<div class="hero"><span class="muted" style="color:#cbd5e1">Cloud sessions</span><div class="big" id="count">0</div><div id="headline">Start recording real NIFTY sessions.</div></div>
+<section class="behavior-section">
+<div class="section-head"><div><div class="eyebrow">CORE MARKET PATTERN</div><h2>NIFTY Opening Behaviour</h2><p>What does NIFTY usually do after each type of opening?</p></div><div class="sample-pill" id="behaviorSamples">0 sessions</div></div>
+<div class="behavior-grid" id="openingCards"></div><div class="insight-banner" id="behaviorInsight"></div>
 </section>
-<h2>Further Down — Which opening is most associated with it?</h2>
-<div class="card" id="furtherByOpen"></div>
-<h2>Which opening type is most likely to Recover?</h2>
-<div class="card" id="recoverByOpen"></div>
-<h2>Complete opening × outcome matrix</h2><div class="card" style="overflow:auto"><table class="table"><thead><tr><th>Opening</th><th>Samples</th><th>Recovers</th><th>Further Down</th><th>Flat</th></tr></thead><tbody id="matrix"></tbody></table></div>
-<h2>Further Down — details</h2><div class="card" id="further"></div><h2>Recovers — details</h2><div class="card" id="recover"></div>
-<h2>Recent vs all-time</h2><div class="grid2"><div class="card"><b>Last 20</b><div id="recent"></div></div><div class="card"><b>Last 50</b><div id="recent50"></div></div></div><div class="note" id="note"></div></section>
-<section id="entry" style="display:none"><div class="card"><h2>Daily Entry</h2><label>Date<input id="date" type="date"></label><label>Previous Close<input id="prev" type="number" step=".05" oninput="calc()"></label><label>Open<input id="open" type="number" step=".05" oninput="calc()"></label><div class="calc" id="calc">Enter Previous Close and Open.</div><label>Opening Type<select id="opening"><option>Flat</option><option>Gap Up</option><option>Gap Down</option></select></label><label>Result<select id="result"><option>Recovers</option><option>Further Down</option><option>Flat</option></select></label><div class="grid2"><label>Day High<input id="high" type="number" step=".05"></label><label>Day Low<input id="low" type="number" step=".05"></label></div><label>Day Close<input id="close" type="number" step=".05"></label><div class="grid2"><label>15-min behavior<select id="m15"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label><label>30-min behavior<select id="m30"><option>Not recorded</option><option>Recovered</option><option>Moved further down</option><option>Stayed around open</option><option>Moved further up</option></select></label></div><label>Expiry Day<select id="expiry"><option>No</option><option>Yes</option></select></label><button class="save" onclick="add()">Save Session</button></div><div class="note">Enter High, Low and Close if you want the app to explain how far the move went.</div></section>
-<section id="history" style="display:none"><h2>History</h2><div id="historyList"></div></section><footer>Historical frequency is descriptive, not a guaranteed future outcome.</footer></main>
+<h2>Opening × Outcome Matrix</h2><div class="card" style="overflow:auto"><table class="table"><thead><tr><th>Opening</th><th>Samples</th><th>Up</th><th>Down</th><th>Flat</th></tr></thead><tbody id="matrix"></tbody></table></div>
+<h2>Down — opening relationship</h2><div class="card" id="downByOpen"></div>
+<h2>Up — opening relationship</h2><div class="card" id="upByOpen"></div>
+<div class="note" id="note"></div>
+</section>
+
+<section id="entry" class="hidden"><div class="card">
+<h2>Automatic 1-Minute NIFTY Capture</h2>
+<div class="note" id="captureStatus">The app automatically uses the previous trading-day close and the first 1-minute candle (09:15–09:16 IST).</div>
+<button class="save" id="captureBtn" onclick="captureNifty()">Capture Today's NIFTY</button>
+<div id="captureData" class="hidden">
+<h2>Captured Session</h2>
+<div class="grid2">
+<div class="calc"><span class="muted">Date</span><div id="capturedDate"><b>—</b></div></div>
+<div class="calc"><span class="muted">Previous Close</span><div id="capturedPrev"><b>—</b></div></div>
+<div class="calc"><span class="muted">09:15 Open</span><div id="capturedOpen"><b>—</b></div></div>
+<div class="calc"><span class="muted">09:15 Close</span><div id="capturedClose"><b>—</b></div></div>
+<div class="calc"><span class="muted">Gap %</span><div id="capturedGap"><b>—</b></div></div>
+<div class="calc"><span class="muted">Candle Change %</span><div id="capturedCandle"><b>—</b></div></div>
+<div class="calc"><span class="muted">Opening Type</span><div id="capturedOpening"><b>—</b></div></div>
+<div class="calc"><span class="muted">Outcome</span><div id="capturedOutcome"><b>—</b></div></div>
+</div>
+<div class="note success" style="margin-top:10px">Opening and outcome are calculated automatically. No manual behaviour selection is required.</div>
+<button class="save" onclick="saveCaptured()">Save Session to Cloud</button>
+</div></div></section>
+<section id="history" class="hidden"><div class="toolbar"><h2 style="margin-right:auto">History</h2><button class="danger small" onclick="resetAll()">Reset All Cloud Data</button></div><div id="historyList"></div></section>
+
+<section id="data" class="hidden"><h2>Cloud Database</h2><div class="card"><p><b>Connected:</b> <span id="dbStatus">Checking...</span></p><p class="muted">Your records are stored in Supabase PostgreSQL, not in this browser. Browser local storage is used only for your login session and optional import data.</p><div class="toolbar"><button onclick="importLocal()">Import old browser data</button><button onclick="exportCSV()">Export CSV</button></div><div id="dataMsg" class="status"></div></div></section>
+
+<footer>Cloud database: Supabase PostgreSQL · Access protected with Supabase Auth + Row Level Security.</footer>
+</main>
+
 <script>
-const KEY="nifty_behavior_tracker_v4",R=["Recovers","Further Down","Flat"],O=["Flat","Gap Up","Gap Down"];
-let data=JSON.parse(localStorage.getItem(KEY)||"[]");
-if(!data.length){
-  const old=JSON.parse(localStorage.getItem("nifty_behavior_tracker_v7")||localStorage.getItem("nifty_behavior_tracker_v6")||localStorage.getItem("nifty_behavior_tracker_v5")||localStorage.getItem("nifty_behavior_tracker_v4")||localStorage.getItem("nifty_behavior_tracker_v3")||localStorage.getItem("nifty_behavior_tracker_v2")||"[]");
-  if(old.length){data=old;localStorage.setItem(KEY,JSON.stringify(data));}
-}date.value=new Date().toISOString().slice(0,10);
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}function tab(x){["dashboard","entry","history"].forEach(y=>{document.getElementById(y).style.display=y==x?"block":"none";document.getElementById("b-"+y).className=y==x?"on":""});render()}
-function calc(){let p=+prev.value,o=+open.value;if(!p||!o)return calc.textContent="Enter Previous Close and Open.";let g=o-p,gp=g/p*100;document.getElementById("calc").textContent=`Gap: ${g.toFixed(2)} points (${gp.toFixed(2)}%)`;opening.value=Math.abs(gp)<=.1?"Flat":gp>0?"Gap Up":"Gap Down"}
-function probs(a){let q={Recovers:0,"Further Down":0,Flat:0};a.forEach(x=>q[x.result]++);R.forEach(r=>q[r]=a.length?q[r]/a.length*100:0);return q}function by(a,t){return a.filter(x=>x.opening==t)}function best(p){return R.reduce((a,b)=>p[b]>p[a]?b:a,R[0])}
-function outcomeClass(r){return r==="Recovers"?"recover":r==="Further Down"?"down":"flat"}
-function block(p,n){return R.map(r=>`<div class="prob"><span class="outcome-${outcomeClass(r)}"><b>${r}</b></span><div class="bar"><div class="fill ${outcomeClass(r)}" style="width:${p[r]}%"></div></div><b class="outcome-${outcomeClass(r)}">${p[r].toFixed(1)}%</b></div>`).join("")+`<span class="muted">Samples: ${n}</span>`}
-function openingBreakdown(result){
-  const rows=O.map(o=>{const a=by(data,o),q=probs(a);return {o,n:a.length,p:q[result]};}).filter(x=>x.n);
-  if(!rows.length)return "<span class='muted'>No data yet.</span>";
-  rows.sort((a,b)=>b.p-a.p);
-  const max=rows[0];
-  return `<div class="note" style="margin-bottom:12px"><b>Highest probability:</b> ${max.o} → ${max.p.toFixed(1)}% ${result} (${Math.round(max.p/100*max.n)} of ${max.n})</div>`+
-    rows.map(x=>`<div class="prob"><span><b>${x.o}</b><br><small>${x.n} samples</small></span><div class="bar"><div class="fill ${outcomeClass(result)}" style="width:${x.p}%"></div></div><b class="outcome-${outcomeClass(result)}">${x.p.toFixed(1)}%</b></div>`).join("");
+/* Paste your Supabase Project URL and publishable/anon key here. Do NOT use a service_role key. */
+const SUPABASE_URL="PASTE_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_KEY="PASTE_SUPABASE_PUBLISHABLE_OR_ANON_KEY_HERE";
+/* Google Apps Script endpoint. It returns {date,previousClose,open} using GOOGLEFINANCE. */
+const MARKET_CAPTURE_URL="PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+let sb=null,user=null,data=[];
+const R=["Up","Down","Flat"],O=["Flat","Gap Up","Gap Down"];
+const $=id=>document.getElementById(id);
+$("date").value=new Date().toISOString().slice(0,10);
+
+function configured(){return SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_KEY.includes("PASTE_")}
+function showAuthMsg(t,ok=false){$("authMsg").innerHTML=`<div class="note ${ok?"success":"error"}">${t}</div>`}
+function showDataMsg(t,ok=false){$("dataMsg").innerHTML=`<div class="note ${ok?"success":"error"}">${t}</div>`}
+function cls(r){return r==="Up"?"up":r==="Down"?"down":"flat"}
+function probs(a){let q={Up:0,"Down":0,Flat:0};a.forEach(x=>q[x.result]++);R.forEach(r=>q[r]=a.length?q[r]/a.length*100:0);return q}
+function by(a,t){return a.filter(x=>x.opening_type===t)}
+function best(q){return R.reduce((a,b)=>q[b]>q[a]?b:a,R[0])}
+function outcomeBadge(r){return `<span class="badge ${cls(r)}">${r}</span>`}
+
+async function init(){
+ if(!configured()){showAuthMsg("Supabase is not configured yet. Add your Project URL and publishable/anon key to index.html.");return}
+ sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+ const {data:sessionData}=await sb.auth.getSession();
+ if(sessionData.session){user=sessionData.session.user;await enterApp()}else $("authScreen").classList.remove("hidden");
+ sb.auth.onAuthStateChange(async(_e,s)=>{if(s){user=s.user;await enterApp()}});
 }
-function stat(a){if(!a.length)return"<span class='muted'>No sessions yet.</span>";let d=a.filter(x=>x.lowFromOpen!=null),c=a.filter(x=>x.closeFromOpen!=null),u=a.filter(x=>x.highFromOpen!=null);let av=k=>{let z=a.map(x=>x[k]).filter(Number.isFinite);return z.length?z.reduce((s,v)=>s+v,0)/z.length:null},mn=k=>{let z=a.map(x=>x[k]).filter(Number.isFinite);return z.length?Math.min(...z):null};return`<div class="metricgrid"><div class="metric"><span class="muted">Samples</span><b>${a.length}</b></div><div class="metric"><span class="muted">Avg Low vs Open</span><b>${av("lowFromOpen")==null?"—":av("lowFromOpen").toFixed(2)+"%"}</b></div><div class="metric"><span class="muted">Worst Low vs Open</span><b>${mn("lowFromOpen")==null?"—":mn("lowFromOpen").toFixed(2)+"%"}</b></div><div class="metric"><span class="muted">Avg Close vs Open</span><b>${av("closeFromOpen")==null?"—":(av("closeFromOpen")>=0?"+":"")+av("closeFromOpen").toFixed(2)+"%"}</b></div></div><p class="muted" style="margin-top:10px">High/Low/Close statistics use only sessions where those prices were entered.</p>`}
-function add(){let d=date.value,p=+prev.value,o=+open.value,h=+high.value,l=+low.value,c=+close.value;if(!d||p<=0||o<=0)return alert("Enter Date, Previous Close and Open.");if(data.some(x=>x.date==d))return alert("A record already exists for this date.");if(h&&l&&h<l)return alert("High cannot be below Low.");let g=o-p,gp=g/p*100;data.push({id:Date.now(),date:d,previous:p,open:o,gap:g,gapPct:gp,opening:opening.value,result:result.value,high:h||null,low:l||null,close:c||null,lowFromOpen:l?(l-o)/o*100:null,highFromOpen:h?(h-o)/o*100:null,closeFromOpen:c?(c-o)/o*100:null,m15:m15.value,m30:m30.value,expiry:expiry.value=="Yes"});data.sort((a,b)=>a.date.localeCompare(b.date));save();prev.value=open.value=high.value=low.value=close.value="";result.value="Flat";tab("dashboard")}
-function resetAll(){
-  if(!data.length){alert("There is no data to reset.");return;}
-  const ok=confirm("WARNING: This will permanently delete ALL recorded NIFTY sessions from this browser. This cannot be undone.\n\nAre you sure you want to reset all data?");
-  if(!ok)return;
-  const verify=confirm("Final confirmation: DELETE ALL DATA?");
-  if(!verify)return;
-  data=[];
-  localStorage.removeItem(KEY);
-  render();
-  tab("dashboard");
-  alert("All NIFTY behavior data has been deleted.");
+async function signUp(){if(!configured())return showAuthMsg("Configure Supabase first.");let email=$("authEmail").value.trim(),password=$("authPassword").value;if(password.length<6)return showAuthMsg("Password must be at least 6 characters.");const {error}=await sb.auth.signUp({email,password});if(error)return showAuthMsg(error.message);showAuthMsg("Account created. If email confirmation is enabled, confirm your email and then sign in.",true)}
+async function signIn(){if(!configured())return showAuthMsg("Configure Supabase first.");let email=$("authEmail").value.trim(),password=$("authPassword").value;const {data:d,error}=await sb.auth.signInWithPassword({email,password});if(error)return showAuthMsg(error.message);user=d.user;await enterApp()}
+async function signOut(){await sb.auth.signOut();user=null;data=[];$("app").classList.add("hidden");$("authScreen").classList.remove("hidden")}
+async function enterApp(){ $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userLabel").textContent=user?.email||"";await loadData();tab("dashboard")}
+async function loadData(){if(!sb||!user)return;const {data:d,error}=await sb.from("daily_sessions").select("*").eq("user_id",user.id).order("date",{ascending:true});if(error){$("dbStatus").textContent="Error";showDataMsg(error.message);return}data=(d||[]).map(rowToApp);$("dbStatus").textContent=`Connected · ${data.length} sessions`;render()}
+function normalizeResult(r){return r==="Up"?"Up":r==="Down"?"Down":r}
+function rowToApp(x){return{id:x.id,date:x.date,previous:x.previous_close,open:x.open_price,gap:x.gap_points,gapPct:x.gap_percent,opening_type:x.opening_type,result:normalizeResult(x.result),candleOpen:x.candle_open,candleClose:x.candle_close,candleChange:x.candle_change,candleChangePct:x.candle_change_percent}}
+function appToRow(x){return{user_id:user.id,date:x.date,previous_close:x.previous,open_price:x.open,gap_points:x.gap,gap_percent:x.gapPct,opening_type:x.opening_type,result:x.result,candle_open:x.candleOpen,candle_close:x.candleClose,candle_change:x.candleChange,candle_change_percent:x.candleChangePct}}
+
+function calcGap(){let p=+$("prev").value,o=+$("open").value;if(!p||!o){$("calc").textContent="Enter Previous Close and Open.";return}let g=o-p,gp=g/p*100;$("calc").textContent=`Gap: ${g.toFixed(2)} points (${gp.toFixed(2)}%)`;$("opening").value=Math.abs(gp)<=.1?"Flat":gp>0?"Gap Up":"Gap Down"}
+
+async function captureNifty(){
+  if(!configured())return alert("Configure Supabase first.");
+  if(MARKET_CAPTURE_URL.includes("PASTE_"))return alert("Add the Google Apps Script Web App URL in index.html first.");
+  $("captureBtn").disabled=true;$("captureBtn").textContent="Capturing...";
+  try{
+    const res=await fetch(MARKET_CAPTURE_URL+"?t="+Date.now());
+    if(!res.ok)throw new Error("Market-data request failed.");
+    const v=await res.json();
+    if(v.error)throw new Error(v.error);
+    const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
+    if(!v.date||![p,o,c].every(Number.isFinite))throw new Error("The market source did not return valid previous close and 09:15 candle data.");
+    const g=o-p,gp=g/p*100,cc=c-o,ccp=cc/o*100;
+    const opening=Math.abs(gp)<0.10?"Flat":gp>=0.10?"Gap Up":"Gap Down";
+    const result=cc>0?"Up":cc<0?"Down":"Flat";
+    captured={date:v.date,previous:p,open:o,gap:g,gapPct:gp,opening_type:opening,result,candleOpen:o,candleClose:c,candleChange:cc,candleChangePct:ccp};
+    $("capturedDate").innerHTML=`<b>${v.date}</b>`;
+    $("capturedPrev").innerHTML=`<b>${p.toFixed(2)}</b>`;
+    $("capturedOpen").innerHTML=`<b>${o.toFixed(2)}</b>`;
+    $("capturedClose").innerHTML=`<b>${c.toFixed(2)}</b>`;
+    $("capturedGap").innerHTML=`<b>${gp>=0?"+":""}${gp.toFixed(3)}%</b>`;
+    $("capturedCandle").innerHTML=`<b>${ccp>=0?"+":""}${ccp.toFixed(3)}%</b>`;
+    $("capturedOpening").innerHTML=outcomeBadge(opening);
+    $("capturedOutcome").innerHTML=outcomeBadge(result);
+    $("captureData").classList.remove("hidden");
+    $("captureStatus").className="note success";
+    $("captureStatus").textContent="Captured automatically from the first 1-minute candle. Review the values, then save.";
+  }catch(e){alert(e.message)}
+  finally{$("captureBtn").disabled=false;$("captureBtn").textContent="Capture Today's NIFTY"}
 }
-function remove(id){if(confirm("Delete this record?")){data=data.filter(x=>x.id!=id);save();render()}}
-function openingCard(opening){
-  const a=by(data,opening),q=probs(a);
-  if(!a.length) return `<div class="opening-card"><h3>${opening}</h3><div class="samples">0 samples</div><p class="muted">No sessions recorded for this opening type.</p></div>`;
-  const winner=best(q), cls=outcomeClass(winner);
-  return `<div class="opening-card">
-    <h3>${opening}</h3>
-    <div class="samples">${a.length} sample${a.length==1?"":"s"}</div>
-    <div class="winner ${cls}"><b>Most likely: ${winner}</b> — ${q[winner].toFixed(1)}%</div>
-    ${R.map(r=>`<div class="probrow"><span class="outcome-${outcomeClass(r)}"><b>${r}</b></span><div class="bar"><div class="fill ${outcomeClass(r)}" style="width:${q[r]}%"></div></div><b class="outcome-${outcomeClass(r)}">${q[r].toFixed(1)}%</b></div>`).join("")}
-  </div>`;
+async function saveCaptured(){
+  if(!captured)return alert("Capture NIFTY first.");
+  if(data.some(x=>x.date===captured.date))return alert("A record already exists for this trading date.");
+  const {error}=await sb.from("daily_sessions").insert(appToRow(captured));
+  if(error)return alert(error.message);
+  await loadData();captured=null;$("captureData").classList.add("hidden");tab("dashboard");
 }
-function openingCard(opening){
-  const a=by(data,opening),q=probs(a);
-  const cls=opening==="Gap Up"?"gapup":opening==="Gap Down"?"gapdown":"flatopen";
-  if(!a.length){
-    return `<div class="behavior-card ${cls}">
-      <div class="opening-title"><h3>${opening}</h3><span class="icon-dot"></span></div>
-      <div class="sample-count">0 sessions</div>
-      <div class="no-data">Record this opening type to build its behaviour profile.</div>
-    </div>`;
-  }
-  const winner=best(q),oc=outcomeClass(winner);
-  return `<div class="behavior-card ${cls}">
-    <div class="opening-title"><h3>${opening}</h3><span class="icon-dot"></span></div>
-    <div class="sample-count">${a.length} session${a.length===1?"":"s"} recorded</div>
-    <div class="winner-box ${oc}">
-      <div class="winner-label">Most likely behaviour</div>
-      <div class="winner-value">${winner} · ${q[winner].toFixed(1)}%</div>
-    </div>
-    <div class="behavior-row"><span class="recover-text"><b>Recovers</b></span><div class="bar"><div class="fill recover-fill" style="width:${q.Recovers}%"></div></div><b class="recover-text">${q.Recovers.toFixed(1)}%</b></div>
-    <div class="behavior-row"><span class="down-text"><b>Further Down</b></span><div class="bar"><div class="fill down-fill" style="width:${q["Further Down"]}%"></div></div><b class="down-text">${q["Further Down"].toFixed(1)}%</b></div>
-    <div class="behavior-row"><span class="flat-text"><b>Flat</b></span><div class="bar"><div class="fill flat-fill" style="width:${q.Flat}%"></div></div><b class="flat-text">${q.Flat.toFixed(1)}%</b></div>
-  </div>`;
+async function removeSession(id){if(!confirm("Delete this NIFTY entry?"))return;const {error}=await sb.from("daily_sessions").delete().eq("id",id).eq("user_id",user.id);if(error)return alert(error.message);await loadData()}
+async function resetAll(){if(!data.length)return alert("There is no cloud data to reset.");if(!confirm("WARNING: This will permanently delete ALL your NIFTY sessions from the cloud database. Continue?"))return;if(!confirm("FINAL CONFIRMATION — DELETE ALL CLOUD DATA?"))return;const {error}=await sb.from("daily_sessions").delete().eq("user_id",user.id);if(error)return alert(error.message);await loadData();alert("All cloud data has been deleted.")}
+
+function openingCard(o){let a=by(data,o),q=probs(a),c=o==="Gap Up"?"gapup":o==="Gap Down"?"gapdown":"flatopen";if(!a.length)return `<div class="behavior-card ${c}"><div class="opening-title"><h3>${o}</h3><span class="icon-dot"></span></div><div class="sample-count">0 sessions</div><div class="no-data">No data yet.</div></div>`;let w=best(q);return `<div class="behavior-card ${c}"><div class="opening-title"><h3>${o}</h3><span class="icon-dot"></span></div><div class="sample-count">${a.length} sessions recorded</div><div class="winner-box ${cls(w)}"><div class="winner-label">Most likely behaviour</div><div class="winner-value">${w} · ${q[w].toFixed(1)}%</div></div>${R.map(r=>`<div class="behavior-row"><span class="${cls(r)}-text"><b>${r}</b></span><div class="bar"><div class="fill ${cls(r)}-fill" style="width:${q[r]}%"></div></div><b class="${cls(r)}-text">${q[r].toFixed(1)}%</b></div>`).join("")}</div>`}
+
+function render(){let p=probs(data),n=data.length;$("count").textContent=n;$("headline").innerHTML=n?`Highest overall frequency: ${outcomeBadge(best(p))}`:"Start recording real NIFTY sessions.";$("openingCards").innerHTML=O.map(openingCard).join("");$("behaviorSamples").textContent=`${n} sessions`;$("behaviorInsight").innerHTML=n?`<b>Quick read:</b> ${O.map(o=>{let a=by(data,o);if(!a.length)return `${o}: no data`;let q=probs(a),w=best(q);return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`}).join(" &nbsp;•&nbsp; ")}`:"Record your first session to build the opening → behaviour probabilities.";$("matrix").innerHTML=O.map(o=>{let a=by(data,o),q=probs(a);return `<tr><td><b>${o}</b></td><td>${a.length}</td><td class="up-text"><b>${q.Up.toFixed(1)}%</b></td><td class="down-text"><b>${q["Down"].toFixed(1)}%</b></td><td class="flat-text"><b>${q.Flat.toFixed(1)}%</b></td></tr>`}).join("");$("downByOpen").innerHTML=relationship("Down");$("upByOpen").innerHTML=relationship("Up");$("note").textContent=n<20?"Collect at least 20 real sessions before relying on probabilities.":"Statistics are calculated from your cloud database.";renderHistory();$("dbStatus").textContent=`Connected · ${n} sessions`}
+function relationship(result){let rows=O.map(o=>{let a=by(data,o),q=probs(a);return{o,n:a.length,p:q[result]}}).filter(x=>x.n).sort((a,b)=>b.p-a.p);if(!rows.length)return"<span class='muted'>No data yet.</span>";return rows.map(x=>`<div class="prob"><span><b>${x.o}</b><br><small>${x.n} samples</small></span><div class="bar"><div class="fill ${cls(result)}-fill" style="width:${x.p}%"></div></div><b class="${cls(result)}-text">${x.p.toFixed(1)}%</b></div>`).join("")}
+function renderHistory(){let h=$("historyList");h.innerHTML=data.length?data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening_type}</span><span>${x.gapPct.toFixed(2)}%</span><b>${outcomeBadge(x.result)}</b><button class="danger small" onclick="removeSession('${x.id}')">Delete</button></div>`).join(""):"<div class='card'>No cloud sessions recorded yet.</div>"}
+
+function tab(t){["dashboard","entry","history","data"].forEach(x=>{$(x).classList.toggle("hidden",x!==t);$("b-"+x).className=x===t?"on":""});if(t==="history")renderHistory()}
+async function importLocal(){
+ if(!user)return;
+ const keys=["nifty_behavior_tracker_v7","nifty_behavior_tracker_v6","nifty_behavior_tracker_v5","nifty_behavior_tracker_v4","nifty_behavior_tracker_v3","nifty_behavior_tracker_v2","nifty_behavior_tracker_v1"];
+ let local=[];for(const k of keys){try{let x=JSON.parse(localStorage.getItem(k)||"[]");if(x.length){local=x;break}}catch{}}
+ if(!local.length)return showDataMsg("No old browser data was found on this device.");
+ let inserted=0,skipped=0;
+ for(const x of local){
+   if(data.some(d=>d.date===x.date)){skipped++;continue}
+   const opening=x.opening_type||x.opening,xr=normalizeResult(x.result);
+   if(!opening||!xr)continue;
+   const row={user_id:user.id,date:x.date,previous_close:x.previous??x.previousClose,open_price:x.open??x.openPrice,gap_points:x.gap??0,gap_percent:x.gapPct??x.gap_percent??0,opening_type:opening,result:xr,high:x.high||null,low:x.low||null,close:x.close||null,low_from_open_pct:x.lowFromOpen??x.lowFromOpenPct??null,high_from_open_pct:x.highFromOpen??x.highFromOpenPct??null,close_from_open_pct:x.closeFromOpen??x.closeFromOpenPct??null,behavior_15min:x.m15||"Not recorded",behavior_30min:x.m30||"Not recorded",expiry:!!x.expiry};
+   const {error}=await sb.from("daily_sessions").insert(row);if(!error)inserted++;
+ }
+ await loadData();showDataMsg(`Imported ${inserted} sessions. ${skipped} existing dates were skipped.`,true)
 }
-function render(){
-  const p=probs(data),n=data.length;
-  count.textContent=n;
-  headline.innerHTML=n
-    ? `Highest historical frequency: <span class="badge ${outcomeClass(best(p))}">${best(p)}</span>`
-    : "Start recording real NIFTY sessions.";
+function exportCSV(){if(!data.length)return alert("No cloud data to export.");let cols=["date","previous","open","gap","gapPct","opening_type","result","high","low","close","m15","m30","expiry"],csv=cols.join(",")+"\\n"+data.map(x=>cols.map(c=>JSON.stringify(x[c]??"")).join(",")).join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="nifty-behavior-data.csv";a.click();URL.revokeObjectURL(a.href)}
 
-  const s=data.at(-1);
-  selected.innerHTML=s
-    ? `<b>${s.date} — ${s.opening}</b>
-       <p>Result: <span class="badge ${outcomeClass(s.result)}">${s.result}</span></p>
-       ${s.low!=null
-         ? `<p>Low vs Open: ${s.lowFromOpen.toFixed(2)}% · High vs Open: +${s.highFromOpen.toFixed(2)}% · Close vs Open: ${s.closeFromOpen>=0?"+":""}${s.closeFromOpen.toFixed(2)}%</p>`
-         : "<p class='muted'>High/Low/Close not entered for this session.</p>"}
-       <button class="danger" style="margin-top:10px" onclick="remove(${s.id})">Delete this entry</button>`
-    : "<span class='muted'>No session recorded.</span>";
-
-  openingCards.innerHTML=O.map(openingCard).join("");
-  behaviorSamples.textContent=`${n} session${n===1?"":"s"}`;
-  behaviorInsight.innerHTML=n
-    ? `<b>Quick read:</b> ${O.map(o=>{
-        const a=by(data,o);
-        if(!a.length)return `${o}: no data`;
-        const q=probs(a),w=best(q);
-        return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`;
-      }).join(" &nbsp;•&nbsp; ")}`
-    : "Record your first NIFTY session to start building the opening → behaviour probabilities.";
-
-  furtherByOpen.innerHTML=openingBreakdown("Further Down");
-  recoverByOpen.innerHTML=openingBreakdown("Recovers");
-
-  matrix.innerHTML=O.map(o=>{
-    const a=by(data,o),q=probs(a);
-    return `<tr><td><b>${o}</b></td><td>${a.length}</td><td class="outcome-recover"><b>${q.Recovers.toFixed(1)}%</b></td><td class="outcome-down"><b>${q["Further Down"].toFixed(1)}%</b></td><td class="outcome-flat"><b>${q.Flat.toFixed(1)}%</b></td></tr>`;
-  }).join("");
-
-  const fd=data.filter(x=>x.result==="Further Down"),rc=data.filter(x=>x.result==="Recovers");
-  further.innerHTML=`<p><b>Probability:</b> <span class="outcome-down"><b>${p["Further Down"].toFixed(1)}%</b></span> (${fd.length}/${n})</p>${stat(fd)}<p>For “Further Down”, the app now shows the average and worst intraday decline from the opening price, plus average close vs open.</p>`;
-  recover.innerHTML=`<p><b>Probability:</b> <span class="outcome-recover"><b>${p.Recovers.toFixed(1)}%</b></span> (${rc.length}/${n})</p>${stat(rc)}<p>Recovery analysis becomes stronger when High, Low and Close are entered consistently.</p>`;
-
-  recent.innerHTML=block(probs(data.slice(-20)),Math.min(20,n));
-  recent50.innerHTML=block(probs(data.slice(-50)),Math.min(50,n));
-  note.textContent=n<20
-    ? "Collect at least 20 real sessions before relying on probability comparisons."
-    : "Your statistics are based on recorded sessions.";
-  historyList.innerHTML=n
-    ? data.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening}</span><span>${x.gapPct.toFixed(2)}%</span><b>${x.result}</b><button class="danger" onclick="remove(${x.id})">Delete entry</button></div>`).join("")
-    : "<div class='card'>No sessions recorded yet.</div>";
-}
-
-render();
-</script></body></html>
+init();
+</script>
+</body></html>
