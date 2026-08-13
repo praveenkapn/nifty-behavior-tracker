@@ -51,7 +51,7 @@ label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{wi
 
 <section id="dashboard">
 <div class="card">
-  <div class="section-head" style="margin-bottom:6px"><div><div class="eyebrow">MULTI-YEAR ANALYSIS</div><h2>Historical NIFTY Behaviour</h2><p>Compare opening type → first-minute outcome across years.</p></div></div>
+  <div class="section-head" style="margin-bottom:6px"><div><div class="eyebrow">MULTI-YEAR ANALYSIS</div><h2>Historical NIFTY Behaviour</h2><p>Compare opening type → first 3-minute outcome across years.</p></div></div>
   <div class="year-toolbar">
     <div><label>Year<select id="yearSelect" onchange="changeYear()"></select></label></div>
     <div class="small-note">Same rules every year: Gap Up ≥ +0.10%, Gap Down ≤ −0.10%, otherwise Flat.</div>
@@ -71,8 +71,8 @@ label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{wi
 </section>
 
 <section id="entry" class="hidden"><div class="card">
-<h2>Automatic 1-Minute NIFTY Capture</h2>
-<div class="note" id="captureStatus">The app automatically uses the previous trading-day close and the first 1-minute candle (09:15–09:16 IST).</div>
+<h2>Automatic 3-Minute NIFTY Capture</h2>
+<div class="note" id="captureStatus">The app uses the previous trading-day close and the first 3-minute candle (09:15–09:18 IST).</div>
 <button class="save" id="captureBtn" onclick="captureNifty()">Capture Today's NIFTY</button>
 <div id="captureData" class="hidden">
 <h2>Captured Session</h2>
@@ -80,7 +80,7 @@ label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{wi
 <div class="calc"><span class="muted">Date</span><div id="capturedDate"><b>—</b></div></div>
 <div class="calc"><span class="muted">Previous Close</span><div id="capturedPrev"><b>—</b></div></div>
 <div class="calc"><span class="muted">09:15 Open</span><div id="capturedOpen"><b>—</b></div></div>
-<div class="calc"><span class="muted">09:15 Close</span><div id="capturedClose"><b>—</b></div></div>
+<div class="calc"><span class="muted">09:18 Close</span><div id="capturedClose"><b>—</b></div></div>
 <div class="calc"><span class="muted">Gap %</span><div id="capturedGap"><b>—</b></div></div>
 <div class="calc"><span class="muted">Candle Change %</span><div id="capturedCandle"><b>—</b></div></div>
 <div class="calc"><span class="muted">Opening Type</span><div id="capturedOpening"><b>—</b></div></div>
@@ -91,15 +91,16 @@ label{display:block;font-size:13px;font-weight:700;margin:11px 0}input,select{wi
 </div></div></section>
 <section id="history" class="hidden"><div class="toolbar"><h2 style="margin-right:auto">History</h2><button class="danger small" onclick="resetAll()">Reset All Cloud Data</button></div><div id="historyList"></div></section>
 
-<section id="data" class="hidden"><h2>Cloud Database</h2><div class="card"><p><b>Connected:</b> <span id="dbStatus">Checking...</span></p><p class="muted">Your records are stored in Supabase PostgreSQL, not in this browser.</p><div class="toolbar"><button onclick="importLocal()">Import old browser data</button><button onclick="exportCSV()">Export CSV</button><button onclick="downloadHistoricalTemplate()">Download historical CSV template</button></div><div class="import-box"><b>Import historical NIFTY data</b><div class="small-note">CSV columns: date, previous_close, open_0915, close_0915. The app calculates Gap %, Opening Type and Up/Down/Flat automatically.</div><input id="historicalCsv" type="file" accept=".csv,text/csv" onchange="importHistoricalCSV(event)"></div><div id="dataMsg" class="status"></div></div></section>
+<section id="data" class="hidden"><h2>Cloud Database</h2><div class="card"><p><b>Cloud status:</b> <span id="dbStatus">Checking...</span></p><p class="muted">Your records are stored in Supabase PostgreSQL, not in this browser.</p><div class="toolbar"><button onclick="importLocal()">Import old browser data</button><button onclick="exportCSV()">Export CSV</button><button onclick="downloadHistoricalTemplate()">Download historical CSV template</button></div><div class="import-box"><b>Import historical NIFTY data</b><div class="small-note">CSV columns: date, previous_close, open_0915, close_0918. The app calculates Gap %, Opening Type and Up/Down/Flat automatically.</div><input id="historicalCsv" type="file" accept=".csv,text/csv" onchange="importHistoricalCSV(event)"></div><div class="small-note">This version uses only 3-minute sessions for statistics. Older 1-minute records remain in Supabase for safety but are excluded from calculations.</div><div id="dataMsg" class="status"></div></div></section>
 
+<footer>Cloud database: Supabase PostgreSQL · Access protected with Supabase Auth + Row Level Security.</footer>
 </main>
 
 <script>
 /* Paste your Supabase Project URL and publishable/anon key here. Do NOT use a service_role key. */
 const SUPABASE_URL="https://phjwagdjaqpvrnovgpwf.supabase.co";
 const SUPABASE_KEY="sb_publishable_nvAg4DKMbS-d9XA1tP-dlA_HdJEu6xp";
-/* Google Apps Script endpoint. It returns {date,previousClose,open} using GOOGLEFINANCE. */
+/* Google Apps Script endpoint. It returns previousClose + the aggregated 09:15–09:18 3-minute candle. */
 const MARKET_CAPTURE_URL="https://script.google.com/macros/s/AKfycbyl3CasUmwdFvgKgO1x0mYr8ityNAoIXgwPBXYSd9w8e1P5lU7wMAS27iG0g6_23A/exec";
 
 let sb=null,user=null,data=[],captured=null,selectedYear="all";
@@ -127,10 +128,20 @@ async function signUp(){if(!configured())return showAuthMsg("Configure Supabase 
 async function signIn(){if(!configured())return showAuthMsg("Configure Supabase first.");let email=$("authEmail").value.trim(),password=$("authPassword").value;const {data:d,error}=await sb.auth.signInWithPassword({email,password});if(error)return showAuthMsg(error.message);user=d.user;await enterApp()}
 async function signOut(){await sb.auth.signOut();user=null;data=[];$("app").classList.add("hidden");$("authScreen").classList.remove("hidden")}
 async function enterApp(){ $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userLabel").textContent=user?.email||"";await loadData();tab("dashboard")}
-async function loadData(){if(!sb||!user)return;const {data:d,error}=await sb.from("daily_sessions").select("*").eq("user_id",user.id).order("date",{ascending:true});if(error){$("dbStatus").textContent="Error";showDataMsg(error.message);return}data=(d||[]).map(rowToApp);$("dbStatus").textContent=`Connected · ${data.length} sessions`;render()}
+let allCloudData=[];
+async function loadData(){
+  if(!sb||!user)return;
+  const {data:d,error}=await sb.from("daily_sessions").select("*").eq("user_id",user.id).order("date",{ascending:true});
+  if(error){$("dbStatus").textContent="Error";showDataMsg(error.message);return}
+  allCloudData=(d||[]).map(rowToApp);
+  data=allCloudData.filter(x=>x.candleMinutes===3);
+  const legacy=allCloudData.length-data.length;
+  $("dbStatus").textContent=`Connected · ${data.length} 3-min sessions${legacy?` · ${legacy} legacy 1-min excluded`:''}`;
+  render()
+}
 function normalizeResult(r){return r==="Up"?"Up":r==="Down"?"Down":r}
-function rowToApp(x){return{id:x.id,date:x.date,previous:x.previous_close,open:x.open_price,gap:x.gap_points,gapPct:x.gap_percent,opening_type:x.opening_type,result:normalizeResult(x.result),candleOpen:x.candle_open,candleClose:x.candle_close,candleChange:x.candle_change,candleChangePct:x.candle_change_percent}}
-function appToRow(x){return{user_id:user.id,date:x.date,previous_close:x.previous,open_price:x.open,gap_points:x.gap,gap_percent:x.gapPct,opening_type:x.opening_type,result:x.result,candle_open:x.candleOpen,candle_close:x.candleClose,candle_change:x.candleChange,candle_change_percent:x.candleChangePct}}
+function rowToApp(x){return{id:x.id,date:x.date,previous:x.previous_close,open:x.open_price,gap:x.gap_points,gapPct:x.gap_percent,opening_type:x.opening_type,result:normalizeResult(x.result),candleOpen:x.candle_open,candleClose:x.candle_close,candleChange:x.candle_change,candleChangePct:x.candle_change_percent,candleMinutes:x.candle_minutes??1}}
+function appToRow(x){return{user_id:user.id,date:x.date,previous_close:x.previous,open_price:x.open,gap_points:x.gap,gap_percent:x.gapPct,opening_type:x.opening_type,result:x.result,candle_open:x.candleOpen,candle_close:x.candleClose,candle_change:x.candleChange,candle_change_percent:x.candleChangePct,candle_minutes:3}}
 
 function calcGap(){let p=+$("prev").value,o=+$("open").value;if(!p||!o){$("calc").textContent="Enter Previous Close and Open.";return}let g=o-p,gp=g/p*100;$("calc").textContent=`Gap: ${g.toFixed(2)} points (${gp.toFixed(2)}%)`;$("opening").value=Math.abs(gp)<=.1?"Flat":gp>0?"Gap Up":"Gap Down"}
 
@@ -144,7 +155,7 @@ async function captureNifty(){
     const v=await res.json();
     if(v.error)throw new Error(v.error);
     const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
-    if(!v.date||![p,o,c].every(Number.isFinite))throw new Error("The market source did not return valid previous close and 09:15 candle data.");
+    if(!v.date||![p,o,c].every(Number.isFinite))throw new Error("The market source did not return valid previous close and 09:15–09:18 candle data.");
     const g=o-p,gp=g/p*100,cc=c-o,ccp=cc/o*100;
     const opening=Math.abs(gp)<0.10?"Flat":gp>=0.10?"Gap Up":"Gap Down";
     const result=cc>0?"Up":cc<0?"Down":"Flat";
@@ -159,7 +170,7 @@ async function captureNifty(){
     $("capturedOutcome").innerHTML=outcomeBadge(result);
     $("captureData").classList.remove("hidden");
     $("captureStatus").className="note success";
-    $("captureStatus").textContent="Captured automatically from the first 1-minute candle. Review the values, then save.";
+    $("captureStatus").textContent="Captured automatically from the first 3-minute candle (09:15–09:18 IST). Review the values, then save.";
   }catch(e){alert(e.message)}
   finally{$("captureBtn").disabled=false;$("captureBtn").textContent="Capture Today's NIFTY"}
 }
@@ -182,10 +193,44 @@ function fillYearSelect(){let ys=years(),s=$("yearSelect");if(!s)return;let prev
 function yearWinner(arr,opening){let a=by(arr,opening);if(!a.length)return "—";let q=probs(a);return `${best(q)} ${q[best(q)].toFixed(1)}%`}
 function renderYearAnalysis(){fillYearSelect();let arr=viewData(),n=arr.length;$("yearSummary").innerHTML=`<div class="year-summary"><div class="year-stat"><span class="muted">Sessions</span><strong>${n}</strong></div><div class="year-stat"><span class="muted">Gap Up</span><strong>${arr.filter(x=>x.opening_type==="Gap Up").length}</strong></div><div class="year-stat"><span class="muted">Gap Down</span><strong>${arr.filter(x=>x.opening_type==="Gap Down").length}</strong></div><div class="year-stat"><span class="muted">Flat</span><strong>${arr.filter(x=>x.opening_type==="Flat").length}</strong></div></div>`;let rows=years().map(y=>{let a=data.filter(x=>String(x.date).startsWith(y+"-"));return `<tr><td><span class="year-chip">${y}</span></td><td>${a.length}</td><td>${yearWinner(a,"Gap Up")}</td><td>${yearWinner(a,"Gap Down")}</td><td>${yearWinner(a,"Flat")}</td></tr>`}).join("");$("yearMatrix").innerHTML=rows||'<tr><td colspan="5">No historical sessions yet.</td></tr>'}
 function parseCsv(text){let lines=text.trim().split(/\r?\n/).filter(Boolean);if(!lines.length)return [];let parseLine=line=>{let out=[],cur="",q=false;for(let i=0;i<line.length;i++){let ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(ch===','&&!q){out.push(cur.trim());cur=""}else cur+=ch}out.push(cur.trim());return out};let h=parseLine(lines[0]).map(x=>x.toLowerCase());return lines.slice(1).map(line=>{let v=parseLine(line),o={};h.forEach((k,i)=>o[k]=v[i]??"");return o}).filter(x=>x.date)}
-async function importHistoricalCSV(e){let f=e.target.files?.[0];if(!f)return;try{let rows=parseCsv(await f.text()),existing=new Set(data.map(x=>x.date)),inserted=0,skipped=0,bad=0;for(let r of rows){let date=r.date.trim(),p=Number(r.previous_close),o=Number(r.open_0915||r.open_price||r.open),c=Number(r.close_0915||r.candle_close||r.close);if(!date||![p,o,c].every(Number.isFinite)){bad++;continue}if(existing.has(date)){skipped++;continue}let gap=o-p,gapPct=gap/p*100,change=c-o,changePct=change/o*100,opening=Math.abs(gapPct)<0.10?"Flat":gapPct>=0.10?"Gap Up":"Gap Down",result=change>0?"Up":change<0?"Down":"Flat";let {error}=await sb.from("daily_sessions").insert({user_id:user.id,date,previous_close:p,open_price:o,gap_points:gap,gap_percent:gapPct,opening_type:opening,result,candle_open:o,candle_close:c,candle_change:change,candle_change_percent:changePct});if(error)throw error;existing.add(date);inserted++}await loadData();showDataMsg(`Imported ${inserted} historical sessions. ${skipped} duplicates skipped. ${bad} invalid rows skipped.`,true)}catch(err){showDataMsg(err.message||"Historical CSV import failed.") }e.target.value=""}
-function downloadHistoricalTemplate(){let csv="date,previous_close,open_0915,close_0915\n2025-01-02,00000.00,00000.00,00000.00\n";let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="nifty-historical-template.csv";a.click();URL.revokeObjectURL(a.href)}
+async function importHistoricalCSV(e){
+  let f=e.target.files?.[0];
+  if(!f)return;
+  try{
+    let rows=parseCsv(await f.text()),existing=new Set(allCloudData.map(x=>x.date)),inserted=0,skipped=0,bad=0;
+    for(let r of rows){
+      let date=r.date.trim(),
+          p=Number(r.previous_close),
+          o=Number(r.open_0915||r.open_price||r.open),
+          c=Number(r.close_0918||r.candle_close||r.close);
+      if(!date||![p,o,c].every(Number.isFinite)){bad++;continue}
+      if(existing.has(date)){skipped++;continue}
+      let gap=o-p,gapPct=gap/p*100,change=c-o,changePct=change/o*100,
+          opening=Math.abs(gapPct)<0.10?"Flat":gapPct>=0.10?"Gap Up":"Gap Down",
+          result=change>0?"Up":change<0?"Down":"Flat";
+      let {error}=await sb.from("daily_sessions").insert({
+        user_id:user.id,date,previous_close:p,open_price:o,
+        gap_points:gap,gap_percent:gapPct,opening_type:opening,result,
+        candle_open:o,candle_close:c,candle_change:change,
+        candle_change_percent:changePct,candle_minutes:3
+      });
+      if(error)throw error;
+      existing.add(date);inserted++;
+    }
+    await loadData();
+    showDataMsg(`Imported ${inserted} historical 3-minute sessions. ${skipped} duplicates skipped. ${bad} invalid rows skipped.`,true)
+  }catch(err){showDataMsg(err.message||"Historical CSV import failed.")}
+  e.target.value=""
+}
+function downloadHistoricalTemplate(){
+  let csv="date,previous_close,open_0915,close_0918\n2025-01-02,00000.00,00000.00,00000.00\n";
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="nifty-3min-historical-template.csv";
+  a.click();URL.revokeObjectURL(a.href)
+}
 function openingCardFiltered(o,arr){let a=by(arr,o),q=probs(a),c=o==="Gap Up"?"gapup":o==="Gap Down"?"gapdown":"flatopen";if(!a.length)return `<div class="behavior-card ${c}"><div class="opening-title"><h3>${o}</h3><span class="icon-dot"></span></div><div class="sample-count">0 sessions</div><div class="no-data">No data yet.</div></div>`;let w=best(q);return `<div class="behavior-card ${c}"><div class="opening-title"><h3>${o}</h3><span class="icon-dot"></span></div><div class="sample-count">${a.length} sessions recorded</div><div class="winner-box ${cls(w)}"><div class="winner-label">Most likely behaviour</div><div class="winner-value">${w} · ${q[w].toFixed(1)}%</div></div>${R.map(r=>`<div class="behavior-row"><span class="${cls(r)}-text"><b>${r}</b></span><div class="bar"><div class="fill ${cls(r)}-fill" style="width:${q[r]}%"></div></div><b class="${cls(r)}-text">${q[r].toFixed(1)}%</b></div>`).join("")}</div>`}
-function render(){renderYearAnalysis();let dataView=viewData(),p=probs(dataView),n=dataView.length;$("count").textContent=n;$("headline").innerHTML=n?`Highest overall frequency: ${outcomeBadge(best(p))}`:"Start recording real NIFTY sessions.";$("openingCards").innerHTML=O.map(openingCard).join("");$("behaviorSamples").textContent=`${n} sessions`;$("behaviorInsight").innerHTML=n?`<b>Quick read:</b> ${O.map(o=>{let a=by(dataView,o);if(!a.length)return `${o}: no data`;let q=probs(a),w=best(q);return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`}).join(" &nbsp;•&nbsp; ")}`:"Record your first session to build the opening → behaviour probabilities.";$("matrix").innerHTML=O.map(o=>{let a=by(dataView,o),q=probs(a);return `<tr><td><b>${o}</b></td><td>${a.length}</td><td class="up-text"><b>${q.Up.toFixed(1)}%</b></td><td class="down-text"><b>${q["Down"].toFixed(1)}%</b></td><td class="flat-text"><b>${q.Flat.toFixed(1)}%</b></td></tr>`}).join("");$("downByOpen").innerHTML=relationship("Down",dataView);$("upByOpen").innerHTML=relationship("Up",dataView);$("note").textContent=n<20?"Collect at least 20 real sessions before relying on probabilities.":"Statistics are calculated from your cloud database.";renderHistory(dataView);$("dbStatus").textContent=`Connected · ${n} sessions`}
+function render(){renderYearAnalysis();let dataView=viewData(),p=probs(dataView),n=dataView.length;$("count").textContent=n;$("headline").innerHTML=n?`Highest overall frequency: ${outcomeBadge(best(p))}`:"Start recording real NIFTY sessions.";$("openingCards").innerHTML=O.map(openingCard).join("");$("behaviorSamples").textContent=`${n} sessions`;$("behaviorInsight").innerHTML=n?`<b>Quick read:</b> ${O.map(o=>{let a=by(dataView,o);if(!a.length)return `${o}: no data`;let q=probs(a),w=best(q);return `${o} → <strong>${w}</strong> ${q[w].toFixed(1)}%`}).join(" &nbsp;•&nbsp; ")}`:"Record your first session to build the opening → behaviour probabilities.";$("matrix").innerHTML=O.map(o=>{let a=by(dataView,o),q=probs(a);return `<tr><td><b>${o}</b></td><td>${a.length}</td><td class="up-text"><b>${q.Up.toFixed(1)}%</b></td><td class="down-text"><b>${q["Down"].toFixed(1)}%</b></td><td class="flat-text"><b>${q.Flat.toFixed(1)}%</b></td></tr>`}).join("");$("downByOpen").innerHTML=relationship("Down",dataView);$("upByOpen").innerHTML=relationship("Up",dataView);$("note").textContent=n<20?"Collect at least 20 real 3-minute sessions before relying on probabilities.":"Statistics are calculated from your cloud database.";renderHistory(dataView);$("dbStatus").textContent=`Connected · ${n} sessions`}
 function relationship(result,arr=data){let rows=O.map(o=>{let a=by(arr,o),q=probs(a);return{o,n:a.length,p:q[result]}}).filter(x=>x.n).sort((a,b)=>b.p-a.p);if(!rows.length)return"<span class='muted'>No data yet.</span>";return rows.map(x=>`<div class="prob"><span><b>${x.o}</b><br><small>${x.n} samples</small></span><div class="bar"><div class="fill ${cls(result)}-fill" style="width:${x.p}%"></div></div><b class="${cls(result)}-text">${x.p.toFixed(1)}%</b></div>`).join("")}
 function renderHistory(arr=data){let h=$("historyList");h.innerHTML=arr.length?arr.slice().reverse().map(x=>`<div class="row"><b>${x.date}</b><span>${x.opening_type}</span><span>${x.gapPct.toFixed(2)}%</span><b>${outcomeBadge(x.result)}</b><button class="danger small" onclick="removeSession('${x.id}')">Delete</button></div>`).join(""):"<div class='card'>No cloud sessions recorded yet.</div>"}
 
@@ -200,12 +245,12 @@ async function importLocal(){
    if(data.some(d=>d.date===x.date)){skipped++;continue}
    const opening=x.opening_type||x.opening,xr=normalizeResult(x.result);
    if(!opening||!xr)continue;
-   const row={user_id:user.id,date:x.date,previous_close:x.previous??x.previousClose,open_price:x.open??x.openPrice,gap_points:x.gap??0,gap_percent:x.gapPct??x.gap_percent??0,opening_type:opening,result:xr,high:x.high||null,low:x.low||null,close:x.close||null,low_from_open_pct:x.lowFromOpen??x.lowFromOpenPct??null,high_from_open_pct:x.highFromOpen??x.highFromOpenPct??null,close_from_open_pct:x.closeFromOpen??x.closeFromOpenPct??null,behavior_15min:x.m15||"Not recorded",behavior_30min:x.m30||"Not recorded",expiry:!!x.expiry};
+   const row={user_id:user.id,date:x.date,previous_close:x.previous??x.previousClose,open_price:x.open??x.openPrice,gap_points:x.gap??0,gap_percent:x.gapPct??x.gap_percent??0,opening_type:opening,result:xr,high:x.high||null,low:x.low||null,close:x.close||null,low_from_open_pct:x.lowFromOpen??x.lowFromOpenPct??null,high_from_open_pct:x.highFromOpen??x.highFromOpenPct??null,close_from_open_pct:x.closeFromOpen??x.closeFromOpenPct??null,behavior_15min:x.m15||"Not recorded",behavior_30min:x.m30||"Not recorded",expiry:!!x.expiry,candle_minutes:1};
    const {error}=await sb.from("daily_sessions").insert(row);if(!error)inserted++;
  }
  await loadData();showDataMsg(`Imported ${inserted} sessions. ${skipped} existing dates were skipped.`,true)
 }
-function exportCSV(){if(!data.length)return alert("No cloud data to export.");let cols=["date","previous","open","gap","gapPct","opening_type","result","high","low","close","m15","m30","expiry"],csv=cols.join(",")+"\\n"+data.map(x=>cols.map(c=>JSON.stringify(x[c]??"")).join(",")).join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="nifty-behavior-data.csv";a.click();URL.revokeObjectURL(a.href)}
+function exportCSV(){if(!data.length)return alert("No 3-minute cloud data to export.");let cols=["date","previous","open","gap","gapPct","opening_type","result","candleOpen","candleClose","candleChange","candleChangePct","candleMinutes"],csv=cols.join(",")+"\\n"+data.map(x=>cols.map(c=>JSON.stringify(x[c]??"")).join(",")).join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="nifty-behavior-3min-data.csv";a.click();URL.revokeObjectURL(a.href)}
 
 init();
 </script>
