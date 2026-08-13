@@ -269,7 +269,7 @@ tr:last-child td{border-bottom:0}
 <script>
 const SUPABASE_URL="https://phjwagdjaqpvrnovgpwf.supabase.co";
 const SUPABASE_KEY="sb_publishable_nvAg4DKMbS-d9XA1tP-dlA_HdJEu6xp";
-const MARKET_CAPTURE_URL="https://script.google.com/macros/s/AKfycbxzbTyQ6p1wFg21yS-2E9SytrADulVEHu-x-r4piaDvEqPVsYBx8nlZCU48TQGSLsaX/exec";
+const MARKET_CAPTURE_URL="https://script.google.com/macros/s/AKfycbyl3CasUmwdFvgKgO1x0mYr8ityNAoIXgwPBXYSd9w8e1P5lU7wMAS27iG0g6_23A/exec";
 
 let sb=null,user=null,data=[],allCloudData=[],captured=null,selectedYear="all",calendarViewDate=null;
 const R=["Up","Down","Flat"],O=["Flat","Gap Up","Gap Down"];
@@ -444,7 +444,9 @@ async function captureNiftyForSelectedDate(){
     if(!res.ok)throw new Error("Market-data request failed.");
     const v=await res.json();if(v.error)throw new Error(v.error);
     const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
-    if(v.date!==selectedDate||![p,o,c].every(Number.isFinite))throw new Error("The market source did not return valid data for the selected date.");
+    if(v.error)throw new Error(v.error);
+    if(v.date!==selectedDate)throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
+    if(![p,o,c].every(Number.isFinite))throw new Error(`Market source returned incomplete values for ${selectedDate}. Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`);
     const g=o-p,gp=g/p*100,cc=c-o,ccp=cc/o*100;
     const opening=Math.abs(gp)<0.10?"Flat":gp>=0.10?"Gap Up":"Gap Down",result=cc>0?"Up":cc<0?"Down":"Flat";
     captured={date:v.date,previous:p,previousSessionDate:v.previousSessionDate,open:o,gap:g,gapPct:gp,opening_type:opening,result,candleOpen:o,candleClose:c,candleChange:cc,candleChangePct:ccp};
