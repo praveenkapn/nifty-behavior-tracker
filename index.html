@@ -162,7 +162,7 @@ tr:last-child td{border-bottom:0}
     <div class="label">3-MINUTE CLOUD SESSIONS</div>
     <div class="big" id="count">0</div>
     <div id="headline">Start recording real NIFTY sessions.</div>
-    <div class="sub">Statistics use only V14 3-minute records.</div>
+    <div class="sub">Statistics use only 3-minute records.</div>
   </div>
 
   <section class="section">
@@ -445,10 +445,6 @@ async function captureNiftyForSelectedDate(){
     const v=await res.json();if(v.error)throw new Error(v.error);
     const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
     if(v.error)throw new Error(v.error);
-    // Do not hard-code a backend build/version here. The frontend only needs a valid
-    // market-data response. This prevents harmless backend version changes from
-    // breaking the live application.
-    if(!v.buildId||v.buildId!=="NIFTY-TRACKER-V20-20260915")throw new Error(`Wrong backend build reached. Expected NIFTY-TRACKER-V20-20260915, received ${v.buildId||"unknown"}.`);
     if(v.date!==selectedDate)throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
     if(!v.previousSessionDate)throw new Error(`Previous trading session was not returned for ${selectedDate}.`);
     if(![p,o,c].every(Number.isFinite)||![p,o,c].every(x=>x>0))throw new Error(`Market source returned invalid positive values for ${selectedDate}. Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`);
