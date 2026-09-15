@@ -444,29 +444,11 @@ async function captureNiftyForSelectedDate(){
     if(!res.ok)throw new Error("Market-data request failed.");
     const v=await res.json();if(v.error)throw new Error(v.error);
     const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
-
-    if(v.date!==selectedDate){
-      throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
-    }
-    
-    if(![p,o,c].every(Number.isFinite) || p<=0 || o<=0 || c<=0){
-      throw new Error(
-        `Market source returned invalid positive values for ${selectedDate}. ` +
-        `Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`
-      );
-    }
-    
-    const previousSessionDate=v.previousSessionDate||v.previous_session_date||null;
-    
-    if(!previousSessionDate){
-      throw new Error(
-        `Previous trading session was not returned for ${selectedDate}. ` +
-        `Please redeploy the updated Google Apps Script and try again.`
-      );
-    }
     if(v.error)throw new Error(v.error);
+    if(v.apiVersion!=="V18-FINAL-PREVIOUS-CLOSE")throw new Error(`Wrong Apps Script deployment reached. Expected V18-FINAL-PREVIOUS-CLOSE, received ${v.apiVersion||"unknown"}.`);
     if(v.date!==selectedDate)throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
-    if(![p,o,c].every(Number.isFinite))throw new Error(`Market source returned incomplete values for ${selectedDate}. Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`);
+    if(!v.previousSessionDate)throw new Error(`Previous trading session was not returned for ${selectedDate}.`);
+    if(![p,o,c].every(Number.isFinite)||![p,o,c].every(x=>x>0))throw new Error(`Market source returned invalid positive values for ${selectedDate}. Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`);
     const g=o-p,gp=g/p*100,cc=c-o,ccp=cc/o*100;
     const opening=Math.abs(gp)<0.10?"Flat":gp>=0.10?"Gap Up":"Gap Down",result=cc>0?"Up":cc<0?"Down":"Flat";
     captured={date:v.date,previous:p,previousSessionDate:v.previousSessionDate,open:o,gap:g,gapPct:gp,opening_type:opening,result,candleOpen:o,candleClose:c,candleChange:cc,candleChangePct:ccp};
@@ -480,15 +462,68 @@ async function captureNiftyForSelectedDate(){
 }
 async function saveCaptured(){
   if(!captured)return alert("Fetch NIFTY data first.");
+
   const existing=data.find(x=>x.date===captured.date);
+  let isUpdate=false;
+
   if(existing){
-    if(!confirm(`A 3-minute record already exists for ${captured.date}. Replace it?`))return;
-    const {error}=await sb.from("daily_sessions").delete().eq("id",existing.id).eq("user_id",user.id);
-    if(error)return alert(error.message);
+    const replace=window.confirm(
+      `A 3-minute record already exists for ${captured.date}.\n\nDo you want to replace the existing record?`
+    );
+
+    // Cancel or closing the confirmation stops immediately.
+    if(!replace){
+      $("captureStatus").className="note";
+      $("captureStatus").textContent=`Existing record for ${captured.date} was kept unchanged.`;
+      return;
+    }
+
+    // Update the existing row. Do NOT delete + insert because
+    // daily_sessions has a unique (user_id, date) constraint.
+    const updatePayload={
+      previous_session_date:captured.previousSessionDate||null,
+      previous_close:captured.previous,
+      open_price:captured.open,
+      gap_points:captured.gap,
+      gap_percent:captured.gapPct,
+      opening_type:captured.opening_type,
+      result:captured.result,
+      candle_open:captured.candleOpen,
+      candle_close:captured.candleClose,
+      candle_change:captured.candleChange,
+      candle_change_percent:captured.candleChangePct,
+      candle_minutes:3
+    };
+
+    const {error:updateError}=await sb.from("daily_sessions")
+      .update(updatePayload)
+      .eq("id",existing.id)
+      .eq("user_id",user.id);
+
+    if(updateError){
+      $("captureStatus").className="note error";
+      $("captureStatus").textContent=updateError.message;
+      return;
+    }
+    isUpdate=true;
+  }else{
+    const {error:insertError}=await sb.from("daily_sessions").insert(appToRow(captured));
+    if(insertError){
+      $("captureStatus").className="note error";
+      $("captureStatus").textContent=insertError.message;
+      return;
+    }
   }
-  const {error}=await sb.from("daily_sessions").insert(appToRow(captured));
-  if(error)return alert(error.message);
-  await loadData();alert(`Session saved for ${captured.date}.`);tab("dashboard");
+
+  const savedDate=captured.date;
+  await loadData();
+
+  $("captureStatus").className="note success";
+  $("captureStatus").textContent=isUpdate
+    ? `Session updated successfully for ${savedDate}.`
+    : `Session saved successfully for ${savedDate}.`;
+
+  captured=null;
 }
 async function removeSession(id){
   if(!confirm("Delete this NIFTY entry?"))return;
