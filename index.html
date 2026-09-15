@@ -444,6 +444,26 @@ async function captureNiftyForSelectedDate(){
     if(!res.ok)throw new Error("Market-data request failed.");
     const v=await res.json();if(v.error)throw new Error(v.error);
     const p=Number(v.previousClose),o=Number(v.candleOpen),c=Number(v.candleClose);
+
+    if(v.date!==selectedDate){
+      throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
+    }
+    
+    if(![p,o,c].every(Number.isFinite) || p<=0 || o<=0 || c<=0){
+      throw new Error(
+        `Market source returned invalid positive values for ${selectedDate}. ` +
+        `Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`
+      );
+    }
+    
+    const previousSessionDate=v.previousSessionDate||v.previous_session_date||null;
+    
+    if(!previousSessionDate){
+      throw new Error(
+        `Previous trading session was not returned for ${selectedDate}. ` +
+        `Please redeploy the updated Google Apps Script and try again.`
+      );
+    }
     if(v.error)throw new Error(v.error);
     if(v.date!==selectedDate)throw new Error(`Market source returned ${v.date||"no date"} instead of selected ${selectedDate}.`);
     if(![p,o,c].every(Number.isFinite))throw new Error(`Market source returned incomplete values for ${selectedDate}. Previous Close=${v.previousClose}, 09:15 Open=${v.candleOpen}, 09:18 Close=${v.candleClose}.`);
